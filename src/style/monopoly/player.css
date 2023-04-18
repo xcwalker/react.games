@@ -1,0 +1,59 @@
+#monopoly #player .money {
+    /* position */
+    position: relative;
+
+    /* sizing */
+    width: 100%;
+    padding: 20px;
+
+    /* flex */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* text */
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1;
+    text-align: center;
+
+    /* styling */
+    border-radius: 10px;
+    color: white;
+    background-color: rgba(0, 195, 0, 0.1);
+    border: 2px solid darkgreen;
+}
+
+#monopoly #player .money span.price {
+    /* one line limit */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    /* number of lines to show */
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+}
+
+#monopoly #player .money span.title {
+    /* position */
+    position: absolute;
+    inset: 5px;
+    right: auto;
+
+    /* text */
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+#monopoly #player .properties ul {
+    /* spacing */
+    margin: 0;
+    padding: 0;
+
+    /* grid */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(275px, 100%), 1fr));
+    gap: 10px;
+}
