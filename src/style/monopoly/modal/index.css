@@ -1,0 +1,54 @@
+#monopoly div.modal {
+    /* position */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    z-index: 2;
+
+    /* sizing */
+    width: min(calc(100% - (min(calc(var(--default-padding) * 4), max(4vw, var(--default-padding))) * 2)), 600px);
+    padding: 10px;
+
+    /* flex */
+    display: flex;
+    flex-direction: column;
+
+    /* styling */
+    background-color: var(--background-color-200);
+    border-radius: 20px;
+    overflow: hidden;
+
+    /* hiding */
+    pointer-events: none;
+    opacity: 0;
+}
+
+#monopoly div.modal-overlay {
+    /* position */
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+
+    /* sizing */
+    width: 100%;
+
+    /* styling */
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+
+    /* hiding */
+    pointer-events: none;
+    opacity: 0;
+}
+
+body.modal-pay-visible #monopoly div.modal-overlay,
+body.modal-trade-visible #monopoly div.modal-overlay {
+    /* hiding */
+    pointer-events: auto;
+    opacity: 1;
+}

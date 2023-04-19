@@ -1,10 +1,8 @@
-#monopoly .property {
+#monopoly .station {
     /* variables */
-    --width: 275px;
     --height: 325px;
 
     /* sizing */
-    /* width: var(--width); */
     width: 100%;
     height: var(--height);
     min-height: var(--height);
@@ -22,8 +20,7 @@
     transition: var(--transition-color-600), var(--transition-background_color-600);
 }
 
-/*** top ***/
-#monopoly .property .top {
+#monopoly .station .top {
     /* position */
     position: relative;
 
@@ -39,7 +36,29 @@
     border-radius: 7.5px;
 }
 
-#monopoly .property .top span.title {
+#monopoly .station .top svg {
+    /* sizing */
+    width: 100px;
+    height: auto;
+}
+
+#monopoly .station .top span {
+    /* text */
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+
+    /* one line limit */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    /* number of lines to show */
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+
+#monopoly .station .top span.title {
     /* position */
     position: absolute;
     top: 10px;
@@ -60,7 +79,7 @@
     transition: left 0.125s ease-in-out, translate 0.125s ease-in-out;
 }
 
-#monopoly .property .top span.name {
+#monopoly .station .top span.name {
     /* position */
     position: absolute;
     bottom: 0;
@@ -90,14 +109,8 @@
     transition: left 0.125s ease-in-out, translate 0.125s ease-in-out;
 }
 
-#monopoly .property:hover span.title,
-#monopoly .property:hover span.name {
-    left: 10px;
-    translate: 0 0;
-}
-
 /*** bottom ***/
-#monopoly .property .bottom {
+#monopoly .station .bottom {
     /* sizing */
     height: 100%;
     padding: 10px;
@@ -111,28 +124,17 @@
     gap: 30px;
 }
 
-#monopoly .property .bottom .rents {
-    /* sizing */
-    width: 100%;
-
-    /* flex */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-}
-
-#monopoly .property .bottom .rents .houses {
+#monopoly .station .bottom .rents {
     /* sizing */
     width: 225px;
 
     /* flex */
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 3px;
 }
 
-#monopoly .property .bottom .rents .houses .line {
+#monopoly .station .bottom .rents .line {
     /* sizing */
     width: 100%;
 
@@ -147,30 +149,24 @@
     border-bottom: 2px solid transparent;
 }
 
-#monopoly .property .bottom .rents .houses .line:hover {
+#monopoly .station .bottom .rents .line:hover {
     border-bottom-color: currentColor;
 }
 
-#monopoly .property .bottom .costs {
-    /* sizing */
-    width: 100%;
-
-    /* flex */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-}
-
-/** bottom text **/
-#monopoly .property .bottom span {
+#monopoly .station .bottom span {
     /* text */
     font-size: 16px;
     font-weight: 500;
     line-height: 1;
 }
 
-#monopoly .property .bottom span.price {
+#monopoly .station .bottom span.price {
     /* text */
     font-weight: 700;
+}
+
+#monopoly .station:hover span.title,
+#monopoly .station:hover span.name {
+    left: 10px;
+    translate: 0 0;
 }

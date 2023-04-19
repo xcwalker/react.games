@@ -30,6 +30,31 @@ export function useAuth(falseValue) {
     return currentUser;
 }
 
+export async function getUserInfo(userID) {
+    try {
+        const docSnap = await getDoc(doc(db, "users", userID));
+        return docSnap.data();
+    } catch (e) {
+        console.error("Error getting user: ", e);
+    }
+}
+
+export async function getMultipleUsersInfo(userArrayID) {
+    var out = [];
+
+    userArrayID.map(async (id, index) => {
+        try {
+            const docSnap = await getDoc(doc(db, "users", id));
+            out.push(docSnap.data());
+        } catch (e) {
+            console.error("Error getting user: ", e);
+        }
+    })
+
+    return out
+}
+
+
 export async function createGame(gameData, userData, gameSettings, currentUser, setLoading) {
     const date = new Date();
 
@@ -62,16 +87,12 @@ export async function updateGame(gameID, arg, setLoading) {
 
     try {
         await updateDoc(doc(db, "games", gameID), {
-            about: arg.about,
+            data: arg.data,
             info: arg.info,
             settings: arg.settings,
-            images: {
-                photoURL: profilePictureURL,
-                headerURL: headerPictureURL,
-            },
-            links: arg.links,
+            userData: arg.userData,
         })
-        console.error("Game updated (gM): ", e);
+        console.log("Game updated (gM)");
     } catch (e) {
         console.error("Error updating game (gM): ", e);
         if (setLoading) setLoading(false);
@@ -79,4 +100,26 @@ export async function updateGame(gameID, arg, setLoading) {
     }
 
     if (setLoading) setLoading(false);
+}
+
+export async function game_pay(gameID, userData, payingUserID, receivingUserID, amount, setLoading) {
+    if (setLoading) setLoading(true);
+
+    var data = userData
+
+    data[payingUserID].money = parseFloat(data[payingUserID].money) - parseFloat(amount);
+    data[receivingUserID].money = parseFloat(data[receivingUserID].money) + parseFloat(amount);
+
+    try {
+        await updateDoc(doc(db, "games", gameID), {
+            userData: data,
+        })
+        if (setLoading) setLoading(false);
+        console.log("Game updated (gM): " + payingUserID + " => £" + amount + " => " + receivingUserID);
+        return { isSuccess: true }
+    } catch (e) {
+        console.error("Error updating game (gM): ", e);
+        if (setLoading) setLoading(false);
+        return { isError: true }
+    }
 }

@@ -19,7 +19,7 @@
 
     /* styling */
     border-radius: 10px;
-    color: white;
+    color: var(--foreground-color-100);
     background-color: rgba(0, 195, 0, 0.1);
     border: 2px solid darkgreen;
 }
@@ -47,7 +47,7 @@
     line-height: 1;
 }
 
-#monopoly #player .properties ul {
+#monopoly #player .properties>ul {
     /* spacing */
     margin: 0;
     padding: 0;

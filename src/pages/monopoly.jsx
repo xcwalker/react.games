@@ -1,11 +1,15 @@
 import { Fragment, useEffect, useState } from "react"
 import { Navigate, useParams } from "react-router-dom";
-import { db, createGame, useAuth } from "../firebase";
+import { db, createGame, useAuth, getUserInfo, getMultipleUsersInfo, game_pay } from "../firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 
 import "../style/monopoly/index.css"
 import "../style/monopoly/player.css"
 import "../style/monopoly/properties.css"
+import "../style/monopoly/station.css"
+import "../style/monopoly/modal/index.css"
+import "../style/monopoly/modal/pay.css"
+import { toast } from "react-hot-toast";
 
 const properties = {
     0: {
@@ -499,7 +503,10 @@ export function Game_Monopoly() {
     const [createdDate, setCreatedDate] = useState();
     const [gameData, setGameData] = useState();
     const [gameInfo, setGameInfo] = useState();
+    const [gamePlayers, setGamePlayers] = useState();
     const [userData, setUserData] = useState();
+    const [allUserData, setAllUserData] = useState();
+    const [userProperties, setUserProperties] = useState();
     const [mode, setMode] = useState();
 
     useEffect(() => {
@@ -510,28 +517,26 @@ export function Game_Monopoly() {
         const unsubscribe = onSnapshot(doc(db, "games", params.gameID), (doc) => {
             console.log("Current data: ", doc.data());
 
-            setGameData(doc.data().data)
-            setGameInfo(doc.data().info)
-            setUserData(doc.data().userData[currentUser.uid])
-            setCreatedDate(new Date(doc.data().info.dates.createdAt.toString()))
+            setGameData(doc.data().data);
+            setGameInfo(doc.data().info);
+            setUserData(doc.data().userData[currentUser.uid]);
+            setAllUserData(doc.data().userData);
+            setGamePlayers(Object.keys(doc.data().userData));
+            setUserProperties(doc.data().userData[currentUser.uid].properties.sort((a, b) => a - b));
+            setCreatedDate(new Date(doc.data().info.dates.createdAt.toString()));
         });
-
-        // gamePromise.then(res => {
-        //     if (res === undefined) {
-        //         setError({ code: 404, message: "Game Not Found" })
-        //         return
-        //     }
-
-        //     console.log(res)
-
-        //     setGameData(res.data)
-        //     setGameInfo(res.info)
-        //     setUserData(res.userData[currentUser.uid])
-        //     setCreatedDate(new Date(res.info.dates.createdAt.toString()))
-        // })
 
         return () => unsubscribe()
     }, [params.gameID, currentUser])
+
+    const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'GBP',
+
+        // These options are needed to round to whole numbers if that's what you want.
+        minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+        maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+    });
 
     return <>
         {error && <>
@@ -545,14 +550,15 @@ export function Game_Monopoly() {
                 {userData && <div className="container" id="player">
                     <div className="money">
                         <span className="title">Balance</span>
-                        <span className="price">£{userData.money}</span>
+                        <span className="price">{formatter.format(userData.money)}</span>
                     </div>
                     <div className="properties">
                         <h2>Your Properties</h2>
-                        {userData.properties && <ul>
-                            {userData.properties.sort().map((item, index) => {
-                                return <li key={index} className="property">
-                                    {!properties[item].isStation && !properties[item].isUtility && <>
+                        {userProperties && userProperties.length === 0 && <div>You have no properties</div>}
+                        {userProperties && userProperties.length > 0 && <ul>
+                            {userProperties.map((item, index) => {
+                                return <Fragment key={index}>
+                                    {!properties[item].isStation && !properties[item].isUtility && <li className="property">
                                         <div className="top" style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }}>
                                             <span className="title">Title Deed</span>
                                             <span className="name">{properties[item].name}</span>
@@ -603,11 +609,47 @@ export function Game_Monopoly() {
                                                 </div>
                                             </div>
                                         </div>
+                                    </li>}
+                                    {properties[item].isStation && <li className="station">
+                                        <div className="top" style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }}>
+                                            <span className="title">Station</span>
+                                            <span className="name">{properties[item].name}</span>
+                                        </div>
+                                        <div className="bottom">
+                                            <div />
+                                            <div className="rents">
+                                                <div className="line">
+                                                    <span>Rent</span>
+                                                    <span className="price">£{properties[item].rent[1]}</span>
+                                                </div>
+                                                <div className="line">
+                                                    <span>If 2 R.R.'s are owned</span>
+                                                    <span className="price">£{properties[item].rent[2]}</span>
+                                                </div>
+                                                <div className="line">
+                                                    <span>If 3 R.R.'s are owned</span>
+                                                    <span className="price">£{properties[item].rent[3]}</span>
+                                                </div>
+                                                <div className="line">
+                                                    <span>If 4 R.R.'s are owned</span>
+                                                    <span className="price">£{properties[item].rent[4]}</span>
+                                                </div>
+                                            </div>
+                                            <div className="costs">
+                                                <div className="mortgage">
+                                                    <span>Mortgage Value </span>
+                                                    <span className="price">£{properties[item].mortgage}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>}
+                                    {properties[item].isUtility && <>
                                     </>}
-                                </li>
+                                </Fragment>
                             })}
                         </ul>}
                     </div>
+                    <Modal_Pay ids={gamePlayers} gameID={params.gameID} userData={allUserData} currentUser={currentUser} />
                 </div>}
             </section>
         </>}
@@ -644,5 +686,132 @@ export function Game_New_Monopoly() {
     return <>
         {ID && <Navigate to={"./" + ID} />}
         <button onClick={newGame}>Click Me!</button>
+    </>
+}
+
+function Modal_Pay(props) {
+    const [players, setPlayers] = useState()
+    const [recipient, setRecipient] = useState("")
+    const [amount, setAmount] = useState(0)
+    const [recipientData, setRecipientData] = useState()
+    const [loading, setLoading] = useState(false)
+
+    // useEffect(() => { // Dev Code
+    //     document.body.classList.add("modal-pay-visible")
+    // }, [])
+
+    useEffect(() => {
+        if (recipient === "") return
+
+        const promise = getUserInfo(recipient)
+
+        promise.then(res => {
+            setRecipientData(res)
+        })
+    }, [recipient])
+
+    const handleAmountChange = (e,) => {
+        setAmount(e.currentTarget.value)
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const promise = game_pay(props.gameID, props.userData, props.currentUser.uid, recipient, amount, setLoading);
+
+        toast.promise(promise, {
+            loading: 'Confirming Transaction!',
+            success: 'Transaction Complete!',
+            error: 'promise Error!',
+        }, {
+            id: "Monopoly-Pay",
+            className: "toast-item",
+            position: "bottom-center",
+        });
+
+        promise.then(res => {
+            if (res.isSuccess) {
+                setRecipient("")
+                setAmount(0)
+                document.body.classList.remove("modal-pay-visible")
+                return
+            }
+
+            if (res.isError) {
+                // handle Error
+                return
+            }
+        })
+    }
+
+    return <>
+        <div className="modal" id="pay">
+            <form className="container" onSubmit={handleSubmit}>
+                {recipientData && <>
+                    <span className="title">And How Much?</span>
+                    <button className="recipient" onClick={() => { setRecipient() }}>
+                        <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
+                        <div className="about">
+                            <span className="name">{recipientData.about.firstname} {recipientData.about.lastname}</span>
+                            <span className="display">{recipientData.about.displayname}</span>
+                            <span className="hover">Change</span>
+                            <span className="icon-hover">Change</span>
+                        </div>
+                    </button>
+                    <input type="number" step={1} onChange={handleAmountChange} value={amount} required min={0} />
+                    <button type="submit" disabled={loading}>Pay!</button>
+                </>}
+                {recipient === "" && props.ids && <>
+                    <span className="title">Who Are You Paying?</span>
+                    <ul>
+                        {props.ids.sort((a, b) => a.localeCompare(b)).map((player, index) => {
+                            if (player === props.currentUser.uid) return <Fragment key={index} />
+                            return <button key={index} onClick={() => setRecipient(player)} type="select">
+                                <Modal_Pay_Player id={player} />
+                            </button>
+                        })}
+                    </ul>
+                </>}
+            </form>
+        </div>
+        <div className="modal-overlay" />
+    </>
+}
+
+function Modal_Pay_Player(props) {
+    const [player, setPlayer] = useState();
+
+    useEffect(() => {
+        if (props.id === undefined) return
+
+        const promise = getUserInfo(props.id)
+
+        promise.then(res => {
+            setPlayer(res)
+        })
+    }, [props.id])
+
+    return <>
+        {player && <>
+            <img src={player.images.photoURL} alt="" className="profilePicture" />
+            <div className="about">
+                <span className="display">{player.about.displayname}</span>
+                <span className="name">{player.about.firstname} {player.about.lastname}</span>
+            </div>
+        </>}
+    </>
+}
+
+function Modal_Trade(props) {
+    const handleSubmit = () => {
+        // const promise = 
+    }
+
+    return <>
+        <div className="modal" id="trade">
+            <form className="container">
+
+            </form>
+        </div>
     </>
 }

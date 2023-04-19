@@ -1,0 +1,197 @@
+body.modal-pay-visible #monopoly div.modal#pay {
+    /* hiding */
+    pointer-events: auto;
+    opacity: 1;
+}
+
+#monopoly div.modal#pay form {
+    /* sizing */
+    width: 100%;
+
+    /* flex */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#monopoly div.modal#pay span.title {
+    /* sizing */
+    margin: 15px 0;
+
+    /* text */
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+}
+
+#monopoly div.modal#pay .recipient {
+    /* position */
+    position: relative;
+
+    /* sizing */
+    padding: 5px;
+
+    /* flex */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+
+    /* styling */
+    border: 2px solid currentColor;
+    background-color: transparent;
+    color: var(--foreground-color-100);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#monopoly div.modal#pay .recipient span.icon-hover {
+    /* position */
+    position: absolute;
+    inset: 10px;
+    left: auto;
+    z-index: -1;
+
+    /* text */
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+}
+
+#monopoly div.modal#pay .recipient span.hover {
+    /* position */
+    position: absolute;
+    inset: 0;
+
+    /* flex */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* text */
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+
+    /* styling */
+    color: var(--form-color-selector);
+    background-color: var(--foreground-color-200);
+
+    /* hiding */
+    opacity: 0;
+}
+
+#monopoly div.modal#pay .recipient:hover span.hover {
+    /* hiding */
+    opacity: 1;
+}
+
+#monopoly div.modal#pay .recipient img.profilePicture {
+    /* sizing */
+    --size: 50px;
+    width: var(--size);
+    height: war(--size);
+
+    /* styling */
+    border-radius: 100vmax;
+    object-fit: cover;
+}
+
+#monopoly div.modal#pay .recipient .about {
+    /* flex */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2.5px;
+}
+
+#monopoly div.modal#pay .recipient .about span.display {
+    /* text */
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+
+    /* styling */
+    color: var(--foreground-color-400);
+}
+
+#monopoly div.modal#pay .recipient .about span.name {
+    /* text */
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+#monopoly div.modal#pay form input[type="number"] {
+    /* sizing */
+    height: 40px;
+    width: 100%;
+    padding: 0 15px;
+
+    /* flex */
+    display: flex;
+    justify-content: left;
+    align-items: center;
+
+    /* text */
+    font-size: 18px;
+    font-weight: 600;
+
+    /* styling */
+    background: transparent;
+    border: 2px solid currentColor;
+    border-radius: 10px;
+    color: var(--foreground-color);
+}
+
+#monopoly div.modal#pay form input[type="number"]:focus {
+    border-color: var(--form-color-selector);
+    outline-offset: 5px;
+    outline: 2px solid transparent;
+}
+
+/* Chrome, Safari, Edge, Opera */
+#monopoly div.modal#pay form input[type="number"]::-webkit-outer-spin-button,
+#monopoly div.modal#pay form input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+#monopoly div.modal#pay form input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+#monopoly div.modal#pay form button[type="submit"] {
+    /* sizing */
+    height: 40px;
+
+    /* flex */
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+
+    /* text */
+    font-size: 20px;
+    font-weight: 700;
+
+    /* styling */
+    border-radius: 10px;
+    border: none;
+    background-color: var(--form-color-selector);
+    color: var(--foreground-color-100);
+    opacity: 1;
+    cursor: pointer;
+
+    /* transition */
+    transition: var(--quick-transition-translate), var(--quick-transition-opacity);
+}
+
+#monopoly div.modal#pay form button[type="submit"]:hover,
+#monopoly div.modal#pay form button[type="submit"]:focus {
+    color: var(--form-color-selector);
+    background-color: var(--foreground-color-200);
+}
