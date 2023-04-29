@@ -121,12 +121,12 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    gap: 30px;
 }
 
 #monopoly .station .bottom .rents {
     /* sizing */
     width: 225px;
+    padding-top: 29px;
 
     /* flex */
     display: flex;

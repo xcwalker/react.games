@@ -1,4 +1,8 @@
-#monopoly #banker {
+#monopoly #banker>ul {
+    /* spacing */
+    margin: 0;
+    padding: 0;
+
     /* grid */
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));

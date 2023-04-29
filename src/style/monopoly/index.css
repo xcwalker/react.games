@@ -17,6 +17,11 @@
     background-color: var(--foreground-color-300);
 }
 
+#monopoly h2 {
+    /* sizing */
+    margin-bottom: 0;
+}
+
 #monopoly button[type="control"] {
     /* sizing */
     width: 100%;

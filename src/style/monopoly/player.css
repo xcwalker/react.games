@@ -42,11 +42,15 @@
     text-overflow: ellipsis;
 }
 
-#monopoly #player .money span.title {
+#monopoly #player .money h2 {
     /* position */
     position: absolute;
     inset: 5px;
     right: auto;
+
+    /* spacing */
+    margin: 0;
+    padding: 0;
 
     /* text */
     font-size: 12px;
@@ -54,7 +58,11 @@
     line-height: 1;
 }
 
-#monopoly #player .controls {
+#monopoly #player .controls>ul {
+    /* spacing */
+    margin: 0;
+    padding: 0;
+
     /* grid */
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
@@ -68,6 +76,6 @@
 
     /* grid */
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(275px, 100%), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
     gap: 10px;
 }

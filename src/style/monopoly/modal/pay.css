@@ -10,19 +10,7 @@ body.modal-pay-visible #monopoly div.modal-overlay#for-pay {
     opacity: 1;
 }
 
-#monopoly div.modal#pay form ul {
-    /* sizing */
-    margin: 0;
-    padding: 0;
-
-    /* grid */
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(min(285px,100%),1fr));
-    gap: 10px;
-}
-
-#monopoly div.modal#pay form button[type="bank"],
-#monopoly div.modal#pay form button[type="select"] {
+#monopoly div.modal#pay form button[type="bank"] {
     /* sizing */
     width: 100%;
     padding: 5px;
@@ -36,15 +24,13 @@ body.modal-pay-visible #monopoly div.modal-overlay#for-pay {
 
     /* styling */
     border-radius: 10px;
-    border: 2px solid transparent;
+    border: 2px solid var(--foreground-color-100);
     background-color: transparent;
     color: var(--foreground-color-100);
 }
 
 #monopoly div.modal#pay form button[type="bank"]:hover,
-#monopoly div.modal#pay form button[type="bank"]:focus-visible,
-#monopoly div.modal#pay form button[type="select"]:hover,
-#monopoly div.modal#pay form button[type="select"]:focus-visible {
+#monopoly div.modal#pay form button[type="bank"]:focus-visible {
     border: 2px solid var(--foreground-color-100);
     background-color: var(--foreground-color-100);
     color: var(--form-color-selector);
@@ -61,43 +47,7 @@ body.modal-pay-visible #monopoly div.modal-overlay#for-pay {
     fill: currentColor;
 }
 
-#monopoly div.modal#pay form button[type="select"] img {
-    /* sizing */
-    --size: 50px;
-    height: var(--size);
-    width: var(--size);
-
-    /* styling */
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-#monopoly div.modal#pay form button[type="select"] .about {
-    /* flex */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 2px;
-}
-
-#monopoly div.modal#pay form button[type="select"] .about span.display {
-    /* text */
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 1;
-
-    /* styling */
-    color: var(--foreground-color-400);
-}
-
-#monopoly div.modal#pay form button[type="select"]:hover .about span.display,
-#monopoly div.modal#pay form button[type="select"]:focus-visible .about span.display {
-    color: inherit;
-}
-
-#monopoly div.modal#pay form button[type="bank"] span,
-#monopoly div.modal#pay form button[type="select"] .about span.name {
+#monopoly div.modal#pay form button[type="bank"] span {
     /* text */
     font-size: 22px;
     font-weight: 700;

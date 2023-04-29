@@ -25,12 +25,9 @@ function App() {
       />
       {/* Games */}
       <Routes>
-        <Route path="game">
-          <Route index />
-          <Route path="monopoly">
-            <Route index element={<Game_New_Monopoly />} />
-            <Route path=":gameID" element={<Game_Monopoly />} />
-          </Route>
+        <Route path="monopoly">
+          <Route index element={<Game_New_Monopoly />} />
+          <Route path=":gameID" element={<Game_Monopoly />} />
         </Route>
       </Routes>
     </Router>

@@ -14,6 +14,7 @@ import "../style/monopoly/modal/loading.css"
 import "../style/monopoly/modal/pay.css"
 import "../style/monopoly/modal/trade.css"
 import "../style/monopoly/modal/goPass.css"
+import { Page_Loading } from "../components/page/page-loading";
 
 const properties = {
     0: {
@@ -543,25 +544,28 @@ export function Game_Monopoly() {
     });
 
     return <>
-        {error && <>
-            Error: {error.code}
-        </>}
         {currentUser && userData && !error && <>
             <section className="game" id="monopoly">
                 {gameInfo.gameMaster === currentUser.uid && <>
                     <div className="container" id="banker">
-                        <button type="control" onClick={() => { document.body.classList.add("modal-goPass-visible") }}>Pass Go</button>
+                        <h2>Banker's Controls</h2>
+                        <ul>
+                            <button type="control" onClick={() => { document.body.classList.add("modal-goPass-visible") }}>Pass Go</button>
+                        </ul>
                     </div>
                     <div className="separator" />
                 </>}
                 {userData && <div className="container" id="player">
                     <div className="money">
-                        <span className="title">Balance</span>
+                        <h2>Balance</h2>
                         <span className="price">{formatter.format(userData.money)}</span>
                     </div>
                     <div className="controls">
-                        <button type="control" onClick={() => { document.body.classList.add("modal-pay-visible") }}>Pay</button>
-                        <button type="control" onClick={() => { document.body.classList.add("modal-trade-visible") }}>Trade</button>
+                        <h2>Controls</h2>
+                        <ul>
+                            <button type="control" onClick={() => { document.body.classList.add("modal-pay-visible") }}>Pay</button>
+                            <button type="control" onClick={() => { document.body.classList.add("modal-trade-visible") }}>Trade</button>
+                        </ul>
                     </div>
                     <div className="properties">
                         <h2>Your Properties</h2>
@@ -627,7 +631,6 @@ export function Game_Monopoly() {
                                             <span className="name">{properties[item].name}</span>
                                         </div>
                                         <div className="bottom">
-                                            <div />
                                             <div className="rents">
                                                 <div className="line">
                                                     <span>Rent</span>
@@ -667,7 +670,10 @@ export function Game_Monopoly() {
             </section>
         </>}
         {!currentUser && currentUser !== null && <>
-            loadingr
+            <Page_Loading />
+        </>}
+        {error && <>
+            Error: {error.code}
         </>}
         {currentUser === null && <>
             noUser
