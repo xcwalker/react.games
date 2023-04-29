@@ -1,0 +1,11 @@
+body.modal-trade-visible #monopoly div.modal#trade {
+    /* hiding */
+    pointer-events: auto;
+    opacity: 1;
+}
+
+body.modal-trade-visible #monopoly div.modal-overlay#for-trade {
+    /* hiding */
+    pointer-events: auto;
+    opacity: 1;
+}

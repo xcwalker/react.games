@@ -12,6 +12,7 @@ import "../style/monopoly/station.css"
 import "../style/monopoly/modal/index.css"
 import "../style/monopoly/modal/loading.css"
 import "../style/monopoly/modal/pay.css"
+import "../style/monopoly/modal/trade.css"
 import "../style/monopoly/modal/goPass.css"
 
 const properties = {
@@ -660,6 +661,7 @@ export function Game_Monopoly() {
                         </ul>}
                     </div>
                     <Modal_Pay ids={gamePlayers} gameID={params.gameID} userData={allUserData} gameData={gameData} currentUser={currentUser} />
+                    <Modal_Trade ids={gamePlayers} gameID={params.gameID} userData={allUserData} gameData={gameData} currentUser={currentUser} />
                     <Modal_Gamemaster_GoPass ids={gamePlayers} gameID={params.gameID} userData={allUserData} gameData={gameData} gameInfo={gameInfo} currentUser={currentUser} />
                 </div>}
             </section>
@@ -842,6 +844,7 @@ function Modal_Trade(props) {
 
             </form>
         </div>
+        <div className="modal-overlay" id="for-trade" onClick={(e) => { e.preventDefault(); setRecipient(""); document.body.classList.remove("modal-trade-visible") }} />
     </>
 }
 
