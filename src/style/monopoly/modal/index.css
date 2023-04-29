@@ -52,3 +52,38 @@ body.modal-trade-visible #monopoly div.modal-overlay {
     pointer-events: auto;
     opacity: 1;
 }
+
+#monopoly div.modal button[type="cancel"],
+#monopoly div.modal button[type="close"] {
+    /* position */
+    position: absolute;
+    inset: 10px;
+    left: auto;
+    bottom: auto;
+
+    /* sizing */
+    --size: 30px;
+    height: var(--size);
+    width: var(--size);
+
+    /* flex */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* styling */
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background-color: transparent;
+    color: var(--foreground-color-100);
+}
+
+#monopoly div.modal button[type="cancel"]:hover,
+#monopoly div.modal button[type="cancel"]:focus-visible,
+#monopoly div.modal button[type="close"]:hover,
+#monopoly div.modal button[type="close"]:focus-visible {
+    /* styling */
+    background-color: var(--foreground-color-100);
+    color: var(--form-color-selector);
+    border: 2px solid var(--foreground-color-100);
+}

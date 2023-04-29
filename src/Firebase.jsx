@@ -108,7 +108,10 @@ export async function game_pay(gameID, userData, payingUserID, receivingUserID, 
     var data = userData
 
     data[payingUserID].money = parseFloat(data[payingUserID].money) - parseFloat(amount);
-    data[receivingUserID].money = parseFloat(data[receivingUserID].money) + parseFloat(amount);
+    
+    if (receivingUserID !== "bank") {
+        data[receivingUserID].money = parseFloat(data[receivingUserID].money) + parseFloat(amount);
+    }
 
     try {
         await updateDoc(doc(db, "games", gameID), {

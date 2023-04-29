@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState } from "react"
 import { Navigate, useParams } from "react-router-dom";
 import { db, createGame, useAuth, getUserInfo, getMultipleUsersInfo, game_pay } from "../firebase";
 import { doc, onSnapshot } from "firebase/firestore";
+import { toast } from "react-hot-toast";
 
 import "../style/monopoly/index.css"
 import "../style/monopoly/player.css"
@@ -9,7 +10,6 @@ import "../style/monopoly/properties.css"
 import "../style/monopoly/station.css"
 import "../style/monopoly/modal/index.css"
 import "../style/monopoly/modal/pay.css"
-import { toast } from "react-hot-toast";
 
 const properties = {
     0: {
@@ -552,6 +552,9 @@ export function Game_Monopoly() {
                         <span className="title">Balance</span>
                         <span className="price">{formatter.format(userData.money)}</span>
                     </div>
+                    <div className="controls">
+                        <button onClick={() => { document.body.classList.add("modal-pay-visible") }}>Pay</button>
+                    </div>
                     <div className="properties">
                         <h2>Your Properties</h2>
                         {userProperties && userProperties.length === 0 && <div>You have no properties</div>}
@@ -690,9 +693,8 @@ export function Game_New_Monopoly() {
 }
 
 function Modal_Pay(props) {
-    const [players, setPlayers] = useState()
     const [recipient, setRecipient] = useState("")
-    const [amount, setAmount] = useState(0)
+    const [amount, setAmount] = useState()
     const [recipientData, setRecipientData] = useState()
     const [loading, setLoading] = useState(false)
 
@@ -701,13 +703,21 @@ function Modal_Pay(props) {
     // }, [])
 
     useEffect(() => {
-        if (recipient === "") return
+        console.log(props.ids)
+    }, [])
+
+    useEffect(() => {
+        if (recipient === "" || recipient === "bank" || !recipient) return
 
         const promise = getUserInfo(recipient)
 
         promise.then(res => {
             setRecipientData(res)
         })
+
+        return () => {
+            setRecipientData("")
+        }
     }, [recipient])
 
     const handleAmountChange = (e,) => {
@@ -747,24 +757,58 @@ function Modal_Pay(props) {
     return <>
         <div className="modal" id="pay">
             <form className="container" onSubmit={handleSubmit}>
-                {recipientData && <>
+                <button type="cancel" onClick={() => { setRecipient(""); setAmount(); document.body.classList.remove("modal-pay-visible") }}>
+                    <span className="material-symbols-outlined">close</span>
+                </button>
+                {(recipientData || recipient === "bank") && <>
                     <span className="title">And How Much?</span>
-                    <button className="recipient" onClick={() => { setRecipient() }}>
-                        <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
-                        <div className="about">
-                            <span className="name">{recipientData.about.firstname} {recipientData.about.lastname}</span>
-                            <span className="display">{recipientData.about.displayname}</span>
+                    <button className="recipient" onClick={() => { setRecipient(""); setAmount() }}>
+                        {recipient !== "bank" && <>
+                            <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
+                            <div className="about">
+                                <span className="name">{recipientData.about.firstname} {recipientData.about.lastname}</span>
+                                <span className="display">{recipientData.about.displayname}</span>
+                                <span className="hover">Change</span>
+                                <span className="icon-hover">Change</span>
+                            </div>
+                        </>}
+                        {recipient === "bank" && <>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlSpace="preserve"
+                                viewBox="0 0 512 512"
+                                className="bank"
+                            >
+                                <g>
+                                    <path d="m451.5 132.5-97.8-43-97.7-43-97.7 43-97.8 43v50h391zM99 365.5a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21H99a10.5 10.5 0 1 0 0 21h3.5v150H99zm126 0a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21h-62a10.5 10.5 0 1 0 0 21h3.5v150H225zm128 0a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21h-62a10.5 10.5 0 1 0 0 21h3.5v150H353zm-292.5 43v6a10 10 0 0 0 10 10h371a10 10 0 0 0 10-10v-6a10 10 0 0 0-10-10h-371a10 10 0 0 0-10 10zm407 28h-423a10 10 0 0 0-10 10v9a10 10 0 0 0 10 10h423a10 10 0 0 0 10-10v-9a10 10 0 0 0-10-10z" />
+                                </g>
+                            </svg>
+                            <span className="bank">Bank</span>
                             <span className="hover">Change</span>
                             <span className="icon-hover">Change</span>
-                        </div>
+                        </>}
                     </button>
-                    <input type="number" step={1} onChange={handleAmountChange} value={amount} required min={0} />
+                    <input type="number" step={1} onChange={handleAmountChange} value={amount} required min={0} placeholder="100" />
                     <button type="submit" disabled={loading}>Pay!</button>
                 </>}
                 {recipient === "" && props.ids && <>
                     <span className="title">Who Are You Paying?</span>
                     <ul>
+                        <button onClick={() => setRecipient("bank")} type="bank">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlSpace="preserve"
+                                viewBox="0 0 512 512"
+                                className="bank"
+                            >
+                                <g>
+                                    <path d="m451.5 132.5-97.8-43-97.7-43-97.7 43-97.8 43v50h391zM99 365.5a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21H99a10.5 10.5 0 1 0 0 21h3.5v150H99zm126 0a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21h-62a10.5 10.5 0 1 0 0 21h3.5v150H225zm128 0a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21h-62a10.5 10.5 0 1 0 0 21h3.5v150H353zm-292.5 43v6a10 10 0 0 0 10 10h371a10 10 0 0 0 10-10v-6a10 10 0 0 0-10-10h-371a10 10 0 0 0-10 10zm407 28h-423a10 10 0 0 0-10 10v9a10 10 0 0 0 10 10h423a10 10 0 0 0 10-10v-9a10 10 0 0 0-10-10z" />
+                                </g>
+                            </svg>
+                            <span>Bank</span>
+                        </button>
                         {props.ids.sort((a, b) => a.localeCompare(b)).map((player, index) => {
+                            console.log(player)
                             if (player === props.currentUser.uid) return <Fragment key={index} />
                             return <button key={index} onClick={() => setRecipient(player)} type="select">
                                 <Modal_Pay_Player id={player} />
@@ -782,6 +826,7 @@ function Modal_Pay_Player(props) {
     const [player, setPlayer] = useState();
 
     useEffect(() => {
+        console.log(props.id)
         if (props.id === undefined) return
 
         const promise = getUserInfo(props.id)
@@ -795,8 +840,8 @@ function Modal_Pay_Player(props) {
         {player && <>
             <img src={player.images.photoURL} alt="" className="profilePicture" />
             <div className="about">
-                <span className="display">{player.about.displayname}</span>
                 <span className="name">{player.about.firstname} {player.about.lastname}</span>
+                <span className="display">{player.about.displayname}</span>
             </div>
         </>}
     </>
