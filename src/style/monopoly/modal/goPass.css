@@ -1,0 +1,11 @@
+body.modal-goPass-visible #monopoly div.modal#goPass {
+    /* hiding */
+    pointer-events: auto;
+    opacity: 1;
+}
+
+body.modal-goPass-visible #monopoly div.modal-overlay#for-goPass {
+    /* hiding */
+    pointer-events: auto;
+    opacity: 1;
+}

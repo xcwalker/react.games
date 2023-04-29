@@ -1,0 +1,67 @@
+#monopoly div.modal div.loading {
+    /* sizing */
+    width: 100%;
+    padding-bottom: 20px;
+
+    /* flex */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    /* animation */
+    --duration: 0.5s;
+    --delay: 0.25s;
+}
+
+#monopoly div.modal div.loading .dot-flashing {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: var(--form-color-selector);
+    color: var(--form-color-selector);
+    animation: dot-flashing var(--duration) infinite linear alternate;
+    animation-delay: calc(var(--delay) * 1);
+}
+
+#monopoly div.modal div.loading .dot-flashing::before,
+#monopoly div.modal div.loading .dot-flashing::after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    top: 0;
+}
+
+#monopoly div.modal div.loading .dot-flashing::before {
+    left: -15px;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: var(--form-color-selector);
+    color: var(--form-color-selector);
+    animation: dot-flashing var(--duration) infinite alternate;
+    animation-delay: calc(var(--delay) * 0);
+}
+
+#monopoly div.modal div.loading .dot-flashing::after {
+    left: 15px;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: var(--form-color-selector);
+    color: var(--form-color-selector);
+    animation: dot-flashing var(--duration) infinite alternate;
+    animation-delay: calc(var(--delay) * 2);
+}
+
+@keyframes dot-flashing {
+    0% {
+        background-color: var(--form-color-selector);
+    }
+
+    75%,
+    100% {
+        background-color: var(--background-color-500);
+    }
+}

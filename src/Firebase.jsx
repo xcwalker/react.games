@@ -102,23 +102,73 @@ export async function updateGame(gameID, arg, setLoading) {
     if (setLoading) setLoading(false);
 }
 
-export async function game_pay(gameID, userData, payingUserID, receivingUserID, amount, setLoading) {
+export async function game_pay(gameID, userData, gameData, payingUserID, receivingUserID, amount, setLoading) {
     if (setLoading) setLoading(true);
 
-    var data = userData
+    var modUserData = userData;
+    var modGameData = gameData;
 
-    data[payingUserID].money = parseFloat(data[payingUserID].money) - parseFloat(amount);
-    
+    modUserData[payingUserID].money = parseFloat(userData[payingUserID].money) - parseFloat(amount);
+
     if (receivingUserID !== "bank") {
-        data[receivingUserID].money = parseFloat(data[receivingUserID].money) + parseFloat(amount);
+        modUserData[receivingUserID].money = parseFloat(userData[receivingUserID].money) + parseFloat(amount);
     }
+
+    if (modGameData.transactions === undefined) {
+        modGameData.transactions = [];
+    }
+
+    modGameData.transactions.push({
+        type: "pay",
+        amount: amount,
+        users: {
+            from: payingUserID,
+            to: receivingUserID,
+        }
+    })
 
     try {
         await updateDoc(doc(db, "games", gameID), {
-            userData: data,
+            userData: modUserData,
+            data: modGameData,
         })
         if (setLoading) setLoading(false);
         console.log("Game updated (gM): " + payingUserID + " => £" + amount + " => " + receivingUserID);
+        return { isSuccess: true }
+    } catch (e) {
+        console.error("Error updating game (gM): ", e);
+        if (setLoading) setLoading(false);
+        return { isError: true }
+    }
+}
+
+export async function game_goPass(gameID, userData, gameData, gameInfo, receivingUserID, setLoading) {
+    if (setLoading) setLoading(true);
+
+    var modUserData = userData;
+    var modGameData = gameData;
+
+    modUserData[receivingUserID].money = parseFloat(userData[receivingUserID].money) + parseFloat(gameInfo.values.goPass);
+
+    if (modGameData.transactions === undefined) {
+        modGameData.transactions = [];
+    }
+
+    modGameData.transactions.push({
+        type: "goPass",
+        amount: gameInfo.values.goPass,
+        users: {
+            to: receivingUserID,
+        }
+    })
+
+    try {
+        await updateDoc(doc(db, "games", gameID), {
+            userData: modUserData,
+            data: modGameData,
+        })
+        if (setLoading) setLoading(false);
+        console.log("Game updated (gM): goPass => £" + gameInfo.values.goPass + " => " + receivingUserID);
         return { isSuccess: true }
     } catch (e) {
         console.error("Error updating game (gM): ", e);

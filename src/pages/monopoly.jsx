@@ -1,15 +1,18 @@
 import { Fragment, useEffect, useState } from "react"
 import { Navigate, useParams } from "react-router-dom";
-import { db, createGame, useAuth, getUserInfo, getMultipleUsersInfo, game_pay } from "../firebase";
+import { db, createGame, useAuth, getUserInfo, getMultipleUsersInfo, game_pay, game_goPass } from "../firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 
 import "../style/monopoly/index.css"
+import "../style/monopoly/banker.css"
 import "../style/monopoly/player.css"
 import "../style/monopoly/properties.css"
 import "../style/monopoly/station.css"
 import "../style/monopoly/modal/index.css"
+import "../style/monopoly/modal/loading.css"
 import "../style/monopoly/modal/pay.css"
+import "../style/monopoly/modal/goPass.css"
 
 const properties = {
     0: {
@@ -544,16 +547,20 @@ export function Game_Monopoly() {
         </>}
         {currentUser && userData && !error && <>
             <section className="game" id="monopoly">
-                {gameInfo.gameMaster === currentUser.uid && <div className="container" id="banker">
-
-                </div>}
+                {gameInfo.gameMaster === currentUser.uid && <>
+                    <div className="container" id="banker">
+                        <button type="control" onClick={() => { document.body.classList.add("modal-goPass-visible") }}>Pass Go</button>
+                    </div>
+                    <div className="separator" />
+                </>}
                 {userData && <div className="container" id="player">
                     <div className="money">
                         <span className="title">Balance</span>
                         <span className="price">{formatter.format(userData.money)}</span>
                     </div>
                     <div className="controls">
-                        <button onClick={() => { document.body.classList.add("modal-pay-visible") }}>Pay</button>
+                        <button type="control" onClick={() => { document.body.classList.add("modal-pay-visible") }}>Pay</button>
+                        <button type="control" onClick={() => { document.body.classList.add("modal-trade-visible") }}>Trade</button>
                     </div>
                     <div className="properties">
                         <h2>Your Properties</h2>
@@ -652,12 +659,13 @@ export function Game_Monopoly() {
                             })}
                         </ul>}
                     </div>
-                    <Modal_Pay ids={gamePlayers} gameID={params.gameID} userData={allUserData} currentUser={currentUser} />
+                    <Modal_Pay ids={gamePlayers} gameID={params.gameID} userData={allUserData} gameData={gameData} currentUser={currentUser} />
+                    <Modal_Gamemaster_GoPass ids={gamePlayers} gameID={params.gameID} userData={allUserData} gameData={gameData} gameInfo={gameInfo} currentUser={currentUser} />
                 </div>}
             </section>
         </>}
         {!currentUser && currentUser !== null && <>
-            loading
+            loadingr
         </>}
         {currentUser === null && <>
             noUser
@@ -697,22 +705,21 @@ function Modal_Pay(props) {
     const [amount, setAmount] = useState()
     const [recipientData, setRecipientData] = useState()
     const [loading, setLoading] = useState(false)
+    const [loadingData, setLoadingData] = useState(false)
 
     // useEffect(() => { // Dev Code
     //     document.body.classList.add("modal-pay-visible")
     // }, [])
 
     useEffect(() => {
-        console.log(props.ids)
-    }, [])
-
-    useEffect(() => {
         if (recipient === "" || recipient === "bank" || !recipient) return
 
+        setLoadingData(true)
         const promise = getUserInfo(recipient)
 
         promise.then(res => {
             setRecipientData(res)
+            setLoadingData(false)
         })
 
         return () => {
@@ -727,7 +734,7 @@ function Modal_Pay(props) {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const promise = game_pay(props.gameID, props.userData, props.currentUser.uid, recipient, amount, setLoading);
+        const promise = game_pay(props.gameID, props.userData, props.gameData, props.currentUser.uid, recipient, amount, setLoading);
 
         toast.promise(promise, {
             loading: 'Confirming Transaction!',
@@ -757,12 +764,15 @@ function Modal_Pay(props) {
     return <>
         <div className="modal" id="pay">
             <form className="container" onSubmit={handleSubmit}>
-                <button type="cancel" onClick={() => { setRecipient(""); setAmount(); document.body.classList.remove("modal-pay-visible") }}>
+                <button type="cancel" onClick={(e) => { e.preventDefault(); setRecipient(""); setAmount(); document.body.classList.remove("modal-pay-visible") }}>
                     <span className="material-symbols-outlined">close</span>
                 </button>
+                {recipient !== "" && !recipientData && recipient !== "bank" && loadingData && <>
+                    <Modal_Part_Loading />
+                </>}
                 {(recipientData || recipient === "bank") && <>
                     <span className="title">And How Much?</span>
-                    <button className="recipient" onClick={() => { setRecipient(""); setAmount() }}>
+                    <button className="recipient" onClick={(e) => { e.preventDefault(); setRecipient(""); setAmount() }}>
                         {recipient !== "bank" && <>
                             <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
                             <div className="about">
@@ -788,12 +798,12 @@ function Modal_Pay(props) {
                             <span className="icon-hover">Change</span>
                         </>}
                     </button>
-                    <input type="number" step={1} onChange={handleAmountChange} value={amount} required min={0} placeholder="100" />
+                    <input type="number" step={1} onChange={handleAmountChange} value={amount} required min={1} max={props.userData[props.currentUser.uid].money} placeholder="100" />
                     <button type="submit" disabled={loading}>Pay!</button>
                 </>}
                 {recipient === "" && props.ids && <>
                     <span className="title">Who Are You Paying?</span>
-                    <ul>
+                    <ul className="userList">
                         <button onClick={() => setRecipient("bank")} type="bank">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -808,25 +818,128 @@ function Modal_Pay(props) {
                             <span>Bank</span>
                         </button>
                         {props.ids.sort((a, b) => a.localeCompare(b)).map((player, index) => {
-                            console.log(player)
                             if (player === props.currentUser.uid) return <Fragment key={index} />
                             return <button key={index} onClick={() => setRecipient(player)} type="select">
-                                <Modal_Pay_Player id={player} />
+                                <Modal_Part_Player id={player} />
                             </button>
                         })}
                     </ul>
                 </>}
             </form>
         </div>
-        <div className="modal-overlay" />
+        <div className="modal-overlay" id="for-pay" onClick={(e) => { e.preventDefault(); setRecipient(""); setAmount(); document.body.classList.remove("modal-pay-visible") }} />
     </>
 }
 
-function Modal_Pay_Player(props) {
+function Modal_Trade(props) {
+    const handleSubmit = () => {
+        // const promise = 
+    }
+
+    return <>
+        <div className="modal" id="trade">
+            <form className="container">
+
+            </form>
+        </div>
+    </>
+}
+
+function Modal_Gamemaster_GoPass(props) {
+    const [recipient, setRecipient] = useState("")
+    const [recipientData, setRecipientData] = useState()
+    const [loading, setLoading] = useState(false)
+    const [loadingData, setLoadingData] = useState(false)
+
+    useEffect(() => {
+        if (recipient === "" || recipient === "bank" || !recipient) return
+
+        setLoadingData(true)
+        const promise = getUserInfo(recipient)
+
+        promise.then(res => {
+            setRecipientData(res)
+            setLoadingData(false)
+        })
+
+        return () => {
+            setRecipientData("")
+        }
+    }, [recipient])
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const promise = game_goPass(props.gameID, props.userData, props.gameData, props.gameInfo, recipient, setLoading);
+
+        toast.promise(promise, {
+            loading: 'Confirming Transaction!',
+            success: 'Transaction Complete!',
+            error: 'promise Error!',
+        }, {
+            id: "Monopoly-Pay",
+            className: "toast-item",
+            position: "bottom-center",
+        });
+
+        promise.then(res => {
+            if (res.isSuccess) {
+                setRecipient("")
+                document.body.classList.remove("modal-goPass-visible")
+                return
+            }
+
+            if (res.isError) {
+                // handle Error
+                return
+            }
+        })
+    }
+
+    return <>
+        {props.currentUser.uid === props.gameInfo.gameMaster && <>
+            <div className="modal" id="goPass">
+                <form className="container" onSubmit={handleSubmit}>
+                    <button type="cancel" onClick={(e) => { e.preventDefault(); setRecipient(""); document.body.classList.remove("modal-goPass-visible") }}>
+                        <span className="material-symbols-outlined">close</span>
+                    </button>
+                    {recipient !== "" && !recipientData && loadingData && <>
+                        <Modal_Part_Loading />
+                    </>}
+                    {recipientData && <>
+                        <span className="title">Confirm?</span>
+                        <button className="recipient" onClick={(e) => { e.preventDefault(); setRecipient("") }}>
+                            <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
+                            <div className="about">
+                                <span className="name">{recipientData.about.firstname} {recipientData.about.lastname}</span>
+                                <span className="display">{recipientData.about.displayname}</span>
+                                <span className="hover">Change</span>
+                                <span className="icon-hover">Change</span>
+                            </div>
+                        </button>
+                        <button type="submit" disabled={loading}>Pay!</button>
+                    </>}
+                    {recipient === "" && props.ids && <>
+                        <span className="title">Who has passed go?</span>
+                        <ul className="userList">
+                            {props.ids.sort((a, b) => a.localeCompare(b)).map((player, index) => {
+                                return <button key={index} onClick={() => setRecipient(player)} type="select">
+                                    <Modal_Part_Player id={player} />
+                                </button>
+                            })}
+                        </ul>
+                    </>}
+                </form>
+            </div>
+            <div className="modal-overlay" id="for-goPass" onClick={(e) => { e.preventDefault(); setRecipient(""); document.body.classList.remove("modal-goPass-visible") }} />
+        </>}
+    </>
+}
+
+function Modal_Part_Player(props) {
     const [player, setPlayer] = useState();
 
     useEffect(() => {
-        console.log(props.id)
         if (props.id === undefined) return
 
         const promise = getUserInfo(props.id)
@@ -847,16 +960,11 @@ function Modal_Pay_Player(props) {
     </>
 }
 
-function Modal_Trade(props) {
-    const handleSubmit = () => {
-        // const promise = 
-    }
-
+function Modal_Part_Loading() {
     return <>
-        <div className="modal" id="trade">
-            <form className="container">
-
-            </form>
+        <div className="loading">
+            <span className="title">Loading</span>
+            <div className="dot-flashing" />
         </div>
     </>
 }

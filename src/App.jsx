@@ -5,6 +5,7 @@ import {
   useLocation
 } from "react-router-dom";
 import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 
 // pages
 import { Game_Monopoly, Game_New_Monopoly } from "./pages/monopoly";
@@ -17,9 +18,11 @@ import "./style/defaults/transitions.css"
 function App() {
 
   return <>
-
     <Router>
       <ScrollToTop />
+      <Toaster
+        reverseOrder={true}
+      />
       {/* Games */}
       <Routes>
         <Route path="game">
