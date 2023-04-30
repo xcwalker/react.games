@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react"
 import { Navigate, useParams } from "react-router-dom";
-import { db, createGame, useAuth, getUserInfo, getMultipleUsersInfo, game_pay, game_goPass } from "../firebase";
+import { db, createGame, useAuth, getUserInfo, getMultipleUsersInfo, game_pay, game_goPass, game_purpose_trade, game_confirm_trade, game_decline_trade } from "../firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 
@@ -13,6 +13,7 @@ import "../style/monopoly/modal/index.css"
 import "../style/monopoly/modal/loading.css"
 import "../style/monopoly/modal/pay.css"
 import "../style/monopoly/modal/trade.css"
+import "../style/monopoly/modal/trade-request.css"
 import "../style/monopoly/modal/goPass.css"
 import { Page_Loading } from "../components/page/page-loading";
 
@@ -512,6 +513,7 @@ export function Game_Monopoly() {
     const [userData, setUserData] = useState();
     const [allUserData, setAllUserData] = useState();
     const [userProperties, setUserProperties] = useState();
+    const [purposedTrades, setPurposedTrades] = useState([]);
     const [mode, setMode] = useState();
 
     useEffect(() => {
@@ -529,6 +531,17 @@ export function Game_Monopoly() {
             setGamePlayers(Object.keys(doc.data().userData));
             setUserProperties(doc.data().userData[currentUser.uid].properties.sort((a, b) => a - b));
             setCreatedDate(new Date(doc.data().info.dates.createdAt.toString()));
+
+            if (doc.data().data.transactions) {
+                doc.data().data.transactions.map((item, index) => {
+                    if (item.type === "trade" && item.users.to === currentUser.uid && item.status === "purposed") {
+                        var arr = purposedTrades;
+                        arr.push(item)
+                        setPurposedTrades(arr)
+                        document.body.classList.add("modal-trade-request-visible")
+                    }
+                })
+            }
         });
 
         return () => unsubscribe()
@@ -665,6 +678,7 @@ export function Game_Monopoly() {
                     </div>
                     <Modal_Pay ids={gamePlayers} gameID={params.gameID} userData={allUserData} gameData={gameData} currentUser={currentUser} />
                     <Modal_Trade ids={gamePlayers} gameID={params.gameID} userData={allUserData} gameData={gameData} currentUser={currentUser} />
+                    {purposedTrades.length > 0 && <Modal_Trade_Purposed purposedTrades={purposedTrades} gameID={params.gameID} userData={allUserData} gameData={gameData} currentUser={currentUser} />}
                     <Modal_Gamemaster_GoPass ids={gamePlayers} gameID={params.gameID} userData={allUserData} gameData={gameData} gameInfo={gameInfo} currentUser={currentUser} />
                 </div>}
             </section>
@@ -687,7 +701,7 @@ export function Game_New_Monopoly() {
     const [error, setError] = useState();
 
     const newGame = () => {
-        createGame({}, {
+        const promise = createGame({}, {
             [currentUser.uid]: {
                 money: 1500,
                 properties: [
@@ -696,10 +710,25 @@ export function Game_New_Monopoly() {
                 cards: [],
             }
         }, {}, currentUser)
-            .then(res => {
-                if (res.id) setID(res.id)
-                if (res.error) setID(res.error)
-            })
+
+        promise.then(res => {
+            setID(res.id)
+        })
+
+        promise.catch(err => {
+            console.error(err)
+            return
+        })
+
+        toast.promise(promise, {
+            loading: 'Creating Game!',
+            success: 'Game Created!',
+            error: 'Game Error!',
+        }, {
+            id: "Monopoly-Create-Game",
+            className: "toast-item",
+            position: "bottom-center",
+        });        
     }
 
     return <>
@@ -730,6 +759,11 @@ function Modal_Pay(props) {
             setLoadingData(false)
         })
 
+        promise.catch(err => {
+            console.error(err)
+            return
+        })
+
         return () => {
             setRecipientData("")
         }
@@ -755,17 +789,15 @@ function Modal_Pay(props) {
         });
 
         promise.then(res => {
-            if (res.isSuccess) {
-                setRecipient("")
-                setAmount(0)
-                document.body.classList.remove("modal-pay-visible")
-                return
-            }
+            setRecipient("")
+            setAmount(0)
+            document.body.classList.remove("modal-pay-visible")
+            return
+        })
 
-            if (res.isError) {
-                // handle Error
-                return
-            }
+        promise.catch(err => {
+            console.error(err)
+            return
         })
     }
 
@@ -840,17 +872,387 @@ function Modal_Pay(props) {
 }
 
 function Modal_Trade(props) {
-    const handleSubmit = () => {
-        // const promise = 
+    const [recipient, setRecipient] = useState("")
+    const [recipientData, setRecipientData] = useState()
+    const [currentUserData, setCurrentUserData] = useState()
+    const [fromPayingUserAmount, setFromPayingUserAmount] = useState(0)
+    const [fromReceivingUserAmount, setFromReceivingUserAmount] = useState(0)
+    const [fromPayingUserProperties, setFromPayingUserProperties] = useState([])
+    const [fromReceivingUserProperties, setFromReceivingUserProperties] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [loadingData, setLoadingData] = useState(false)
+
+    useEffect(() => {
+        if (recipient === "") return
+
+        setLoadingData(true)
+        const promise = getUserInfo(recipient)
+
+        promise.then(res => {
+            setRecipientData(res)
+            setLoadingData(false)
+        })
+
+        promise.catch(err => {
+            console.error(err)
+            return
+        })
+
+        return () => {
+            setRecipientData("")
+        }
+    }, [recipient])
+
+    useEffect(() => {
+        if (!props.currentUser) return
+
+        setLoadingData(true)
+        const promise = getUserInfo(props.currentUser.uid)
+
+        promise.then(res => {
+            setCurrentUserData(res)
+            setLoadingData(false)
+        })
+
+        promise.catch(err => {
+            console.error(err)
+            return
+        })
+
+        return () => {
+            setCurrentUserData("")
+        }
+    }, [props.currentUser])
+
+    const handlePropertyAdd = (propertyID, from) => {
+        if (from === "receiving") {
+            if (fromReceivingUserProperties.includes(propertyID)) {
+                const index = fromReceivingUserProperties.indexOf(propertyID);
+                if (index > -1) { // only splice array when item is found
+                    fromReceivingUserProperties.splice(index, 1); // 2nd parameter means remove one item only
+                    document.querySelector("#receiving-property-" + propertyID).classList.remove("selected")
+                }
+            } else if (!fromReceivingUserProperties.includes(propertyID)) {
+                fromReceivingUserProperties.push(propertyID)
+                document.querySelector("#receiving-property-" + propertyID).classList.add("selected")
+            }
+        }
+
+
+        if (from === "paying") {
+            if (fromPayingUserProperties.includes(propertyID)) {
+                const index = fromPayingUserProperties.indexOf(propertyID);
+                if (index > -1) { // only splice array when item is found
+                    fromPayingUserProperties.splice(index, 1); // 2nd parameter means remove one item only
+                    document.querySelector("#paying-property-" + propertyID).classList.remove("selected")
+                }
+            } else if (!fromPayingUserProperties.includes(propertyID)) {
+                fromPayingUserProperties.push(propertyID)
+                document.querySelector("#paying-property-" + propertyID).classList.add("selected")
+            }
+        }
+
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const promise = game_purpose_trade(props.gameID, props.gameData, props.currentUser.uid, recipient, {
+            amount: fromPayingUserAmount,
+            properties: fromPayingUserProperties,
+        }, {
+            amount: fromReceivingUserAmount,
+            properties: fromReceivingUserProperties,
+        }, setLoading)
+
+        toast.promise(promise, {
+            loading: 'Sending Proposal!',
+            success: 'Proposal Sent!',
+            error: 'Proposal Error!',
+        }, {
+            id: "Monopoly-Proposal-Send",
+            className: "toast-item",
+            position: "bottom-center",
+        });
+
+        promise.then(res => {
+            handleClose()
+            return
+        })
+
+        promise.catch(err => {
+            console.error(err)
+            return
+        })
+    }
+
+    const handleClose = (e) => {
+        if (e) {
+            e.preventDefault();
+        }
+        setRecipient("");
+        setFromPayingUserAmount(0)
+        setFromReceivingUserAmount(0)
+        setFromPayingUserProperties([])
+        setFromReceivingUserProperties([])
+        document.body.classList.remove("modal-trade-visible")
     }
 
     return <>
         <div className="modal" id="trade">
-            <form className="container">
+            <form className="container" onSubmit={handleSubmit}>
+                <button type="cancel" onClick={handleClose}>
+                    <span className="material-symbols-outlined">close</span>
+                </button>
+                {recipient !== "" && !recipientData && loadingData && <>
+                    <Modal_Part_Loading />
+                </>}
+                {recipientData && currentUserData && recipient && <>
+                    <span className="title">And what are you trading?</span>
+                    <div className="side-by-side">
+                        <div className="paying-user">
+                            <div className="recipient">
+                                <img src={currentUserData.images.photoURL} alt="" className="profilePicture" />
+                                <div className="about">
+                                    <span className="name">{currentUserData.about.firstname} {currentUserData.about.lastname}</span>
+                                    <span className="display">{currentUserData.about.displayname}</span>
+                                </div>
+                            </div>
+                            <input type="number" step={1} onChange={(e) => { setFromPayingUserAmount(e.target.value) }} value={fromPayingUserAmount} required min={0} max={props.userData[props.currentUser.uid].money} placeholder="100" />
+                            <ul className="properties">
+                                {props.userData[props.currentUser.uid].properties && props.userData[props.currentUser.uid].properties.sort((a, b) => a - b).map((item, index) => {
+                                    return <button key={index} type="select" onClick={(e) => { e.preventDefault(); handlePropertyAdd(item, "paying") }} id={"paying-property-" + item} style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }}>
+                                        <span className="title">
+                                            {properties[item].isStation && <>Station</>}
+                                            {properties[item].isUtility && <>Utility</>}
+                                            {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
+                                        </span>
+                                        <span className="name">{properties[item].name}</span>
+                                    </button>
+                                })}
+                            </ul>
+                        </div>
+                        <div className="receiving-user">
+                            <button className="recipient" onClick={(e) => { e.preventDefault(); setRecipient(""); setAmount() }}>
+                                <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
+                                <div className="about">
+                                    <span className="name">{recipientData.about.firstname} {recipientData.about.lastname}</span>
+                                    <span className="display">{recipientData.about.displayname}</span>
+                                    <span className="hover">Change</span>
+                                    <span className="icon-hover">Change</span>
+                                </div>
+                            </button>
+                            <input type="number" step={1} onChange={(e) => { setFromReceivingUserAmount(e.target.value) }} value={fromReceivingUserAmount} required min={0} max={props.userData[recipient].money} placeholder="100" />
+                            <ul className="properties">
+                                {props.userData[recipient].properties && props.userData[recipient].properties.sort((a, b) => a - b).map((item, index) => {
+                                    return <button key={index} type="select" onClick={(e) => { e.preventDefault(); handlePropertyAdd(item, "receiving") }} id={"receiving-property-" + item} style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }}>
+                                        <span className="title">
+                                            {properties[item].isStation && <>Station</>}
+                                            {properties[item].isUtility && <>Utility</>}
+                                            {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
+                                        </span>
+                                        <span className="name">{properties[item].name}</span>
+                                    </button>
+                                })}
+                            </ul>
+                        </div>
+                    </div>
+                    <button type="submit" disabled={loading}>Purpose Trade!</button>
+                </>}
+                {recipient === "" && props.ids && <>
+                    <span className="title">Who are you trading with?</span>
+                    <ul className="userList">
+                        {props.ids.sort((a, b) => a.localeCompare(b)).map((player, index) => {
+                            if (player === props.currentUser.uid) return <Fragment key={index} />
+                            return <button key={index} onClick={(e) => { e.preventDefault(); setRecipient(player) }} type="select">
+                                <Modal_Part_Player id={player} />
+                            </button>
+                        })}
+                    </ul>
+                </>}
+            </form>
+        </div >
+        <div className="modal-overlay" id="for-trade" onClick={handleClose} />
+    </>
+}
 
+function Modal_Trade_Purposed(props) {
+    const [trade, setTrade] = useState();
+    const [recipientData, setRecipientData] = useState()
+    const [payingUserData, setCurrentUserData] = useState()
+    const [loading, setLoading] = useState(false)
+    const [loadingData, setLoadingData] = useState(false)
+
+    useEffect(() => {
+        console.log(props.purposedTrades, props.purposedTrades[0])
+        setTrade(props.purposedTrades[0])
+    }, [props.purposedTrades])
+
+    useEffect(() => {
+        if (!trade || trade.users.to === "") return
+
+        setLoadingData(true)
+        const promise = getUserInfo(trade.users.to)
+
+        promise.then(res => {
+            setRecipientData(res)
+            setLoadingData(false)
+        })
+
+        promise.catch(err => {
+            console.error(err)
+            return
+        })
+
+        return () => {
+            setRecipientData("")
+        }
+    }, [trade])
+
+    useEffect(() => {
+        if (!trade || !trade.users.from) return
+
+        setLoadingData(true)
+        const promise = getUserInfo(trade.users.from)
+
+        promise.then(res => {
+            setCurrentUserData(res)
+            setLoadingData(false)
+        })
+
+        promise.catch(err => {
+            console.error(err)
+            return
+        })
+
+        return () => {
+            setCurrentUserData("")
+        }
+    }, [trade])
+
+    const handleAccept = (e) => {
+        e.preventDefault();
+
+        const promise = game_confirm_trade(props.gameID, props.userData, props.gameData, trade, setLoading);
+
+        promise.catch(err => {
+            console.error(err)
+            return
+        })
+
+        promise.then(res => {
+            handleClose()
+            return
+        })
+
+        toast.promise(promise, {
+            loading: 'Accepting Trade!',
+            success: 'Trade Complete!',
+            error: 'Trade Error!',
+        }, {
+            id: "Monopoly-Proposal-Accept",
+            className: "toast-item",
+            position: "bottom-center",
+        });
+    }
+
+    const handleDecline = (e) => {
+        e.preventDefault();
+
+        const promise = game_decline_trade(props.gameID, props.gameData, trade, setLoading);
+
+        promise.catch(err => {
+            console.error(err)
+            return
+        })
+
+        promise.then(res => {
+            handleClose()
+            return
+        })
+
+        toast.promise(promise, {
+            loading: 'Declining Trade!',
+            success: 'Trade Declined!',
+            error: 'Trade Error!',
+        }, {
+            id: "Monopoly-Proposal-Decline",
+            className: "toast-item",
+            position: "bottom-center",
+        });
+    }
+
+    const handleClose = (e) => {
+        if (e) {
+            e.preventDefault();
+        }
+        document.body.classList.remove("modal-trade-request-visible")
+    }
+
+    return <>
+        <div className="modal" id="trade-request" >
+            <form className="container">
+                <button type="cancel" onClick={handleDecline} tabIndex={2}>
+                    <span className="material-symbols-outlined">close</span>
+                </button>
+                {!recipientData && loadingData && <>
+                    <Modal_Part_Loading />
+                </>}
+                {recipientData && payingUserData && <>
+                    <span className="title">Trade Request</span>
+                    <div className="side-by-side">
+                        <div className="paying-user">
+                            <div className="recipient">
+                                <img src={payingUserData.images.photoURL} alt="" className="profilePicture" />
+                                <div className="about">
+                                    <span className="name">{payingUserData.about.firstname} {payingUserData.about.lastname}</span>
+                                    <span className="display">{payingUserData.about.displayname}</span>
+                                </div>
+                            </div>
+                            <input type="number" readOnly value={trade.trade.paying.amount} tabIndex={-1} />
+                            <ul className="properties">
+                                {trade.trade.paying.properties && trade.trade.paying.properties.sort((a, b) => a - b).map((item, index) => {
+                                    return <div key={index} className="item" id={"paying-property-" + item} style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }}>
+                                        <span className="title">
+                                            {properties[item].isStation && <>Station</>}
+                                            {properties[item].isUtility && <>Utility</>}
+                                            {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
+                                        </span>
+                                        <span className="name">{properties[item].name}</span>
+                                    </div>
+                                })}
+                            </ul>
+                        </div>
+                        <div className="receiving-user">
+                            <div className="recipient">
+                                <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
+                                <div className="about">
+                                    <span className="name">{recipientData.about.firstname} {recipientData.about.lastname}</span>
+                                    <span className="display">{recipientData.about.displayname}</span>
+                                </div>
+                            </div>
+                            <input type="number" readOnly value={trade.trade.receiving.amount} tabIndex={-1} />
+                            <ul className="properties">
+                                {trade.trade.receiving.properties && trade.trade.receiving.properties.sort((a, b) => a - b).map((item, index) => {
+                                    return <div key={index} className="item" id={"receiving-property-" + item} style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }}>
+                                        <span className="title">
+                                            {properties[item].isStation && <>Station</>}
+                                            {properties[item].isUtility && <>Utility</>}
+                                            {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
+                                        </span>
+                                        <span className="name">{properties[item].name}</span>
+                                    </div>
+                                })}
+                            </ul>
+                        </div>
+                    </div>
+                    <div className="side-by-side">
+                        <button type="decline" disabled={loading} tabIndex={1} onClick={handleDecline}>Decline</button>
+                        <button type="accept" disabled={loading} tabIndex={1} onClick={handleAccept}>Accept</button>
+                    </div>
+                </>}
             </form>
         </div>
-        <div className="modal-overlay" id="for-trade" onClick={(e) => { e.preventDefault(); setRecipient(""); document.body.classList.remove("modal-trade-visible") }} />
+        <div className="modal-overlay" id="for-trade-request" onClick={handleDecline} />
     </>
 }
 

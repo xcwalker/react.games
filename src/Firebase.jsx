@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, sendPasswordResetEmail } from "firebase/auth";
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { toast } from "react-hot-toast";
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_AUTH_API_KEY,
@@ -78,7 +79,7 @@ export async function createGame(gameData, userData, gameSettings, currentUser, 
     } catch (e) {
         console.error("Error adding game (gM): ", e);
         if (setLoading) setLoading(false);
-        return { error: e }
+        return Promise.reject(e)
     }
 }
 
@@ -93,10 +94,11 @@ export async function updateGame(gameID, arg, setLoading) {
             userData: arg.userData,
         })
         console.log("Game updated (gM)");
+        return
     } catch (e) {
         console.error("Error updating game (gM): ", e);
         if (setLoading) setLoading(false);
-        return
+        return Promise.reject(e)
     }
 
     if (setLoading) setLoading(false);
@@ -134,11 +136,150 @@ export async function game_pay(gameID, userData, gameData, payingUserID, receivi
         })
         if (setLoading) setLoading(false);
         console.log("Game updated (gM): " + payingUserID + " => £" + amount + " => " + receivingUserID);
-        return { isSuccess: true }
+        return
     } catch (e) {
         console.error("Error updating game (gM): ", e);
         if (setLoading) setLoading(false);
-        return { isError: true }
+        return Promise.reject(e)
+    }
+}
+
+export async function game_purpose_trade(gameID, gameData, payingUserID, receivingUserID, fromPayingUser, fromReceivingUser, setLoading) {
+    if (setLoading) setLoading(true);
+
+    var modGameData = gameData;
+
+    if (modGameData.transactions === undefined) {
+        modGameData.transactions = [];
+    }
+
+    modGameData.transactions.push({
+        type: "trade",
+        date: new Date().getTime().toString(),
+        trade: {
+            paying: fromPayingUser,
+            receiving: fromReceivingUser,
+        },
+        users: {
+            from: payingUserID,
+            to: receivingUserID,
+        },
+        status: "purposed",
+    })
+
+    try {
+        await updateDoc(doc(db, "games", gameID), {
+            data: modGameData,
+        })
+        if (setLoading) setLoading(false);
+        console.log("Game updated (gM): Proposal Sent" + payingUserID + " => " + receivingUserID);
+        return
+    } catch (e) {
+        console.error("Error updating game (gM): ", e);
+        if (setLoading) setLoading(false);
+        return Promise.reject(e)
+    }
+}
+
+export async function game_confirm_trade(gameID, userData, gameData, trade, setLoading) {
+    if (setLoading) setLoading(true);
+
+    var isError = false;
+    var modUserData = userData;
+    var modGameData = gameData;
+    var tradeData;
+
+    modGameData.transactions.map((item, index) => {
+        if (item.date === trade.date) {
+            tradeData = item;
+            modGameData.transactions[index].status = "confirmed"
+            return
+        }
+    })
+
+    if (parseFloat(modUserData[tradeData.users.from].money) - parseFloat(tradeData.trade.paying.amount) < 0 || parseFloat(modUserData[tradeData.users.to].money) - parseFloat(tradeData.trade.receiving.amount) < 0) {
+        isError = true;
+    }
+
+    modUserData[tradeData.users.from].money = parseFloat(modUserData[tradeData.users.from].money) - parseFloat(tradeData.trade.paying.amount);
+    modUserData[tradeData.users.to].money = parseFloat(modUserData[tradeData.users.to].money) + parseFloat(tradeData.trade.paying.amount);
+
+    modUserData[tradeData.users.from].money = parseFloat(modUserData[tradeData.users.from].money) + parseFloat(tradeData.trade.receiving.amount);
+    modUserData[tradeData.users.to].money = parseFloat(modUserData[tradeData.users.to].money) - parseFloat(tradeData.trade.receiving.amount);
+
+    if (tradeData.trade.paying.properties) {
+        tradeData.trade.paying.properties.map(property => {
+            if (!modUserData[tradeData.users.from].properties.includes(property)) {
+                isError = true;
+                return
+            }
+
+            const index = modUserData[tradeData.users.from].properties.indexOf(property);
+            if (index > -1) { // only splice array when item is found
+                modUserData[tradeData.users.from].properties.splice(index, 1); // 2nd parameter means remove one item only
+                modUserData[tradeData.users.to].properties.push(property)
+            }
+        })
+    }
+
+    if (tradeData.trade.receiving.properties) {
+        tradeData.trade.receiving.properties.map(property => {
+            if (!modUserData[tradeData.users.to].properties.includes(property)) {
+                isError = true;
+                return
+            }
+
+            const index = modUserData[tradeData.users.to].properties.indexOf(property);
+            if (index > -1) { // only splice array when item is found
+                modUserData[tradeData.users.to].properties.splice(index, 1); // 2nd parameter means remove one item only
+                modUserData[tradeData.users.from].properties.push(property)
+            }
+        })
+    }
+
+    if (!isError) {
+        try {
+            await updateDoc(doc(db, "games", gameID), {
+                userData: modUserData,
+                data: modGameData,
+            })
+            if (setLoading) setLoading(false);
+            console.log("Game updated (gM): " + tradeData.users.from + " => " + tradeData.users.to);
+            return
+        } catch (e) {
+            console.error("Error updating game (gM): ", e);
+            if (setLoading) setLoading(false);
+            return Promise.reject(e)
+        }
+    } else {
+        if (setLoading) setLoading(false);
+        return Promise.reject({ code: 400, message: "Request had bad syntax or was impossible to fulfill" })
+        // return Error({ isError: true, code: 400, message: "Request had bad syntax or was impossible to fulfill" })
+    }
+}
+
+export async function game_decline_trade(gameID, gameData, trade, setLoading) {
+    if (setLoading) setLoading(true);
+
+    var modGameData = gameData;
+    modGameData.transactions.map((item, index) => {
+        if (item.date === trade.date) {
+            modGameData.transactions[index].status = "declined"
+            return
+        }
+    })
+
+    try {
+        await updateDoc(doc(db, "games", gameID), {
+            data: modGameData,
+        })
+        if (setLoading) setLoading(false);
+        console.log("Game updated (gM): " + trade.users.from + " =X=> " + trade.users.to);
+        return
+    } catch (e) {
+        console.error("Error updating game (gM): ", e);
+        if (setLoading) setLoading(false);
+        return Promise.reject(e)
     }
 }
 
@@ -169,10 +310,10 @@ export async function game_goPass(gameID, userData, gameData, gameInfo, receivin
         })
         if (setLoading) setLoading(false);
         console.log("Game updated (gM): goPass => £" + gameInfo.values.goPass + " => " + receivingUserID);
-        return { isSuccess: true }
+        return
     } catch (e) {
         console.error("Error updating game (gM): ", e);
         if (setLoading) setLoading(false);
-        return { isError: true }
+        return Promise.reject(e)
     }
 }

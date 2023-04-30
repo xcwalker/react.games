@@ -1,0 +1,183 @@
+body.modal-trade-request-visible {
+    overflow-y: hidden;
+}
+
+body.modal-trade-request-visible #monopoly div.modal#trade-request {
+    /* hiding */
+    display: flex;
+}
+
+body.modal-trade-request-visible #monopoly div.modal-overlay#for-trade-request {
+    /* hiding */
+    pointer-events: auto;
+    opacity: 1;
+}
+
+#monopoly div.modal#trade-request .side-by-side>div {
+    /* flex */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#monopoly div.modal#trade-request .properties {
+    /* spacing */
+    margin: 0;
+    padding: 0;
+
+    /* flex */
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#monopoly div.modal#trade-request .properties .item {
+    /* position */
+    position: relative;
+
+    /* sizing */
+    height: 55px;
+    width: 100%;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+
+    /* styling */
+    background-color: var(--background-color);
+    color: var(--foreground-color);
+    border-radius: 7.5px;
+    border: none;
+}
+
+#monopoly div.modal#trade-request .properties .item.selected {
+    background-color: var(--form-color-selector);
+    color: var(--foreground-color-100);
+}
+
+#monopoly div.modal#trade-request .properties .item span.title {
+    /* position */
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    translate: -50% 0;
+
+    /* sizing */
+    width: max-content;
+    max-width: 100%;
+    margin: 0;
+
+    /* text */
+    font-size: 10px;
+    font-weight: 900;
+    line-height: 1;
+    text-transform: uppercase;
+
+    /* transition */
+    transition: left 0.125s ease-in-out, translate 0.125s ease-in-out;
+}
+
+#monopoly div.modal#trade-request .properties .item span.name {
+    /* position */
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    translate: -50% 0;
+
+    /* sizing */
+    width: max-content;
+    max-width: calc(100% - 20px);
+    padding-bottom: 10px;
+
+    /* text */
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+
+    /* one line limit */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    /* number of lines to show */
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+
+    /* transition */
+    transition: left 0.125s ease-in-out, translate 0.125s ease-in-out;
+}
+
+/*** decline button ***/
+#monopoly div.modal form button[type="decline"] {
+    /* sizing */
+    height: 40px;
+
+    /* flex */
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+
+    /* text */
+    font-size: 20px;
+    font-weight: 700;
+
+    /* styling */
+    border-radius: 10px;
+    border: none;
+    background-color: var(--form-color-invalid);
+    color: var(--foreground-color-100);
+    opacity: 1;
+    cursor: pointer;
+
+    /* transition */
+    transition: var(--quick-transition-translate), var(--quick-transition-opacity);
+}
+
+#monopoly div.modal form button[type="decline"]:hover,
+#monopoly div.modal form button[type="decline"]:focus-visible {
+    color: var(--form-color-invalid);
+    background-color: var(--foreground-color-200);
+}
+
+#monopoly div.modal form button[type="decline"]:focus-visible {
+    outline: 2px solid var(--form-color-invalid);
+    outline-offset: 2px;
+}
+
+/*** accept button ***/
+#monopoly div.modal form button[type="accept"] {
+    /* sizing */
+    height: 40px;
+
+    /* flex */
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+
+    /* text */
+    font-size: 20px;
+    font-weight: 700;
+
+    /* styling */
+    border-radius: 10px;
+    border: none;
+    background-color: var(--form-color-valid);
+    color: var(--foreground-color-100);
+    opacity: 1;
+    cursor: pointer;
+
+    /* transition */
+    transition: var(--quick-transition-translate), var(--quick-transition-opacity);
+}
+
+#monopoly div.modal form button[type="accept"]:hover,
+#monopoly div.modal form button[type="accept"]:focus-visible {
+    color: var(--form-color-valid);
+    background-color: var(--foreground-color-200);
+}
+
+#monopoly div.modal form button[type="accept"]:focus-visible {
+    outline: 2px solid var(--form-color-valid);
+    outline-offset: 2px;
+}

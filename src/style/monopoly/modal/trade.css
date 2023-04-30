@@ -1,11 +1,171 @@
+body.modal-trade-visible {
+    overflow-y: hidden;
+}
+
 body.modal-trade-visible #monopoly div.modal#trade {
     /* hiding */
-    pointer-events: auto;
-    opacity: 1;
+    display: flex;
 }
 
 body.modal-trade-visible #monopoly div.modal-overlay#for-trade {
     /* hiding */
     pointer-events: auto;
     opacity: 1;
+}
+
+#monopoly div.modal#trade .side-by-side>div {
+    /* flex */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#monopoly div.modal#trade .properties {
+    /* spacing */
+    margin: 0;
+    padding: 0;
+
+    /* flex */
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#monopoly div.modal#trade .properties button[type="select"] {
+    /* position */
+    position: relative;
+
+    /* sizing */
+    height: 55px;
+    width: 100%;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+
+    /* styling */
+    background-color: var(--background-color);
+    color: var(--foreground-color);
+    border-radius: 7.5px;
+    border: none;
+}
+
+#monopoly div.modal#trade .properties button[type="select"].selected {
+    background-color: var(--form-color-selector);
+    color: var(--foreground-color-100);
+}
+
+#monopoly div.modal#trade .properties button[type="select"] span.title {
+    /* position */
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    translate: -50% 0;
+
+    /* sizing */
+    width: max-content;
+    max-width: 100%;
+    margin: 0;
+
+    /* text */
+    font-size: 10px;
+    font-weight: 900;
+    line-height: 1;
+    text-transform: uppercase;
+
+    /* transition */
+    transition: left 0.125s ease-in-out, translate 0.125s ease-in-out;
+}
+
+#monopoly div.modal#trade .properties button[type="select"] span.name {
+    /* position */
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    translate: -50% 0;
+
+    /* sizing */
+    width: max-content;
+    max-width: calc(100% - 20px);
+    padding-bottom: 10px;
+
+    /* text */
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+
+    /* one line limit */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    /* number of lines to show */
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+
+    /* transition */
+    transition: left 0.125s ease-in-out, translate 0.125s ease-in-out;
+}
+
+#monopoly div.modal#trade .properties button[type="select"]:focus-visible {
+    outline: 2px solid var(--form-color-selector);
+    outline-offset: 2px;
+}
+
+#monopoly div.modal#trade .properties button[type="select"]:hover span.title,
+#monopoly div.modal#trade .properties button[type="select"]:focus-visible span.title,
+#monopoly div.modal#trade .properties button[type="select"]:hover span.name,
+#monopoly div.modal#trade .properties button[type="select"]:focus-visible span.name {
+    left: 10px;
+    translate: 0 0;
+}
+
+#monopoly div.modal#trade .paying-user .properties button[type="select"].selected::after {
+    /* content */
+    content: "arrow_forward";
+
+    /* position */
+    left: auto;
+}
+
+#monopoly div.modal#trade .receiving-user .properties button[type="select"].selected::after {
+    /* content */
+    content: "arrow_back";
+
+    /* position */
+    right: auto;
+}
+
+
+#monopoly div.modal#trade .receiving-user .properties button[type="select"].selected:hover span.title,
+#monopoly div.modal#trade .receiving-user .properties button[type="select"].selected:focus-visible span.title {
+    left: 22.5px;
+}
+
+#monopoly div.modal#trade .properties button[type="select"]::after {
+    /* Google Fonts */
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -moz-font-feature-settings: 'liga';
+    -moz-osx-font-smoothing: grayscale;
+
+    /* position */
+    position: absolute;
+    inset: 7.5px;
+    bottom: auto;
+
+    /* flex */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* text */
+    font-size: 15px;
 }

@@ -1,7 +1,10 @@
+body.modal-pay-visible {
+    overflow-y: hidden;
+}
+
 body.modal-pay-visible #monopoly div.modal#pay {
     /* hiding */
-    pointer-events: auto;
-    opacity: 1;
+    display: flex;
 }
 
 body.modal-pay-visible #monopoly div.modal-overlay#for-pay {
@@ -70,44 +73,4 @@ body.modal-pay-visible #monopoly div.modal-overlay#for-pay {
     font-size: 22px;
     font-weight: 700;
     line-height: 1;
-}
-
-#monopoly div.modal#pay form input[type="number"] {
-    /* sizing */
-    height: 40px;
-    width: 100%;
-    padding: 0 15px;
-
-    /* flex */
-    display: flex;
-    justify-content: left;
-    align-items: center;
-
-    /* text */
-    font-size: 18px;
-    font-weight: 600;
-
-    /* styling */
-    background: transparent;
-    border: 2px solid currentColor;
-    border-radius: 10px;
-    color: var(--foreground-color);
-}
-
-#monopoly div.modal#pay form input[type="number"]:focus {
-    border-color: var(--form-color-selector);
-    outline-offset: 5px;
-    outline: 2px solid transparent;
-}
-
-/* Chrome, Safari, Edge, Opera */
-#monopoly div.modal#pay form input[type="number"]::-webkit-outer-spin-button,
-#monopoly div.modal#pay form input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-/* Firefox */
-#monopoly div.modal#pay form input[type="number"] {
-    -moz-appearance: textfield;
 }
