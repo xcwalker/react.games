@@ -360,6 +360,50 @@
     outline: none;
 }
 
+/*** continue button ***/
+#monopoly div.modal form button[type="continue"] {
+    /* sizing */
+    height: 40px;
+
+    /* flex */
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+
+    /* text */
+    font-size: 20px;
+    font-weight: 700;
+
+    /* styling */
+    border-radius: 10px;
+    border: none;
+    background-color: var(--form-color-selector);
+    color: var(--foreground-color-100);
+    opacity: 1;
+    cursor: pointer;
+
+    /* transition */
+    transition: var(--quick-transition-translate), var(--quick-transition-opacity);
+}
+
+#monopoly div.modal form button[type="continue"]:hover,
+#monopoly div.modal form button[type="continue"]:focus-visible {
+    color: var(--form-color-selector);
+    background-color: var(--foreground-color-200);
+}
+
+#monopoly div.modal form button[type="continue"]:focus-visible {
+    outline: 2px solid var(--form-color-selector);
+    outline-offset: 2px;
+}
+
+#monopoly div.modal form button[type="continue"]:disabled {
+    background-color: var(--background-color-300);
+    color: var(--foreground-color-500);
+    cursor: default;
+}
+
 /*** submit button ***/
 #monopoly div.modal form button[type="submit"] {
     /* sizing */

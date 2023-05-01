@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react"
 import { Navigate, useParams } from "react-router-dom";
-import { db, createGame, useAuth, getUserInfo, getMultipleUsersInfo, game_pay, game_goPass, game_purpose_trade, game_confirm_trade, game_decline_trade } from "../firebase";
+import { db, createGame, useAuth, getUserInfo, getMultipleUsersInfo, game_pay, game_goPass, game_purpose_trade, game_confirm_trade, game_decline_trade, game_sale_purpose, game_sale_confirm, game_sale_decline } from "../firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 
@@ -15,492 +15,465 @@ import "../style/monopoly/modal/pay.css"
 import "../style/monopoly/modal/trade.css"
 import "../style/monopoly/modal/trade-request.css"
 import "../style/monopoly/modal/goPass.css"
+import "../style/monopoly/modal/property-sell.css"
+import "../style/monopoly/modal/sale-request.css"
 import { Page_Loading } from "../components/page/page-loading";
 
-const properties = {
-    0: {
-        name: "Old Kent Road",
-        color: "#8d6a1a",
-        colorText: "#ffffff",
-        set: 0,
-        price: 60,
-        mortgage: 30,
-        house: 50,
-        hotel: 50,
-        rent: {
-            0: 2,
-            1: 10,
-            2: 30,
-            3: 90,
-            4: 160,
-            5: 250,
-        },
+const properties = [{
+    name: "Old Kent Road",
+    color: "#8d6a1a",
+    colorText: "#ffffff",
+    set: 0,
+    price: 60,
+    mortgage: 30,
+    house: 50,
+    hotel: 50,
+    rent: {
+        0: 2,
+        1: 10,
+        2: 30,
+        3: 90,
+        4: 160,
+        5: 250,
     },
-    1: {
-        name: "Whitechapel Road",
-        color: "#8d6a1a",
-        colorText: "#ffffff",
-        set: 0,
-        price: 60,
-        mortgage: 30,
-        house: 50,
-        hotel: 50,
-        rent: {
-            0: 4,
-            1: 20,
-            2: 60,
-            3: 180,
-            4: 320,
-            5: 450,
-        },
+}, {
+    name: "Whitechapel Road",
+    color: "#8d6a1a",
+    colorText: "#ffffff",
+    set: 0,
+    price: 60,
+    mortgage: 30,
+    house: 50,
+    hotel: 50,
+    rent: {
+        0: 4,
+        1: 20,
+        2: 60,
+        3: 180,
+        4: 320,
+        5: 450,
     },
-    2: {
-        name: "The Angel Islington",
-        color: "#b8e0e7",
-        colorText: "#000000",
-        set: 1,
-        price: 100,
-        mortgage: 50,
-        house: 50,
-        hotel: 50,
-        rent: {
-            0: 6,
-            1: 30,
-            2: 90,
-            3: 270,
-            4: 400,
-            5: 550,
-        },
+}, {
+    name: "The Angel Islington",
+    color: "#b8e0e7",
+    colorText: "#000000",
+    set: 1,
+    price: 100,
+    mortgage: 50,
+    house: 50,
+    hotel: 50,
+    rent: {
+        0: 6,
+        1: 30,
+        2: 90,
+        3: 270,
+        4: 400,
+        5: 550,
     },
-    3: {
-        name: "Euston Road",
-        color: "#b8e0e7",
-        colorText: "#000000",
-        set: 1,
-        price: 100,
-        mortgage: 50,
-        house: 50,
-        hotel: 50,
-        rent: {
-            0: 6,
-            1: 30,
-            2: 90,
-            3: 270,
-            4: 400,
-            5: 550,
-        },
+}, {
+    name: "Euston Road",
+    color: "#b8e0e7",
+    colorText: "#000000",
+    set: 1,
+    price: 100,
+    mortgage: 50,
+    house: 50,
+    hotel: 50,
+    rent: {
+        0: 6,
+        1: 30,
+        2: 90,
+        3: 270,
+        4: 400,
+        5: 550,
     },
-    4: {
-        name: "Pentonville Road",
-        color: "#b8e0e7",
-        colorText: "#000000",
-        set: 1,
-        price: 120,
-        mortgage: 60,
-        house: 50,
-        hotel: 50,
-        rent: {
-            0: 8,
-            1: 40,
-            2: 100,
-            3: 300,
-            4: 450,
-            5: 600,
-        },
+}, {
+    name: "Pentonville Road",
+    color: "#b8e0e7",
+    colorText: "#000000",
+    set: 1,
+    price: 120,
+    mortgage: 60,
+    house: 50,
+    hotel: 50,
+    rent: {
+        0: 8,
+        1: 40,
+        2: 100,
+        3: 300,
+        4: 450,
+        5: 600,
     },
-    5: {
-        name: "Pall Mall",
-        color: "#ea4186",
-        colorText: "#ffffff",
-        set: 2,
-        price: 140,
-        mortgage: 70,
-        house: 100,
-        hotel: 100,
-        rent: {
-            0: 10,
-            1: 50,
-            2: 150,
-            3: 450,
-            4: 625,
-            5: 750,
-        },
+}, {
+    name: "Pall Mall",
+    color: "#ea4186",
+    colorText: "#ffffff",
+    set: 2,
+    price: 140,
+    mortgage: 70,
+    house: 100,
+    hotel: 100,
+    rent: {
+        0: 10,
+        1: 50,
+        2: 150,
+        3: 450,
+        4: 625,
+        5: 750,
     },
-    6: {
-        name: "Whitehall",
-        color: "#ea4186",
-        colorText: "#ffffff",
-        set: 2,
-        price: 140,
-        mortgage: 70,
-        house: 100,
-        hotel: 100,
-        rent: {
-            0: 10,
-            1: 50,
-            2: 150,
-            3: 450,
-            4: 625,
-            5: 750,
-        },
+}, {
+    name: "Whitehall",
+    color: "#ea4186",
+    colorText: "#ffffff",
+    set: 2,
+    price: 140,
+    mortgage: 70,
+    house: 100,
+    hotel: 100,
+    rent: {
+        0: 10,
+        1: 50,
+        2: 150,
+        3: 450,
+        4: 625,
+        5: 750,
     },
-    7: {
-        name: "Northumberland Avenue",
-        color: "#ea4186",
-        colorText: "#ffffff",
-        set: 2,
-        price: 160,
-        mortgage: 80,
-        house: 100,
-        hotel: 100,
-        rent: {
-            0: 12,
-            1: 60,
-            2: 180,
-            3: 500,
-            4: 700,
-            5: 900,
-        },
+}, {
+    name: "Northumberland Avenue",
+    color: "#ea4186",
+    colorText: "#ffffff",
+    set: 2,
+    price: 160,
+    mortgage: 80,
+    house: 100,
+    hotel: 100,
+    rent: {
+        0: 12,
+        1: 60,
+        2: 180,
+        3: 500,
+        4: 700,
+        5: 900,
     },
-    8: {
-        name: "Bow Street",
-        color: "#e69709",
-        colorText: "#000000",
-        set: 3,
-        price: 180,
-        mortgage: 90,
-        house: 100,
-        hotel: 100,
-        rent: {
-            0: 14,
-            1: 70,
-            2: 200,
-            3: 550,
-            4: 750,
-            5: 950,
-        },
+}, {
+    name: "Bow Street",
+    color: "#e69709",
+    colorText: "#000000",
+    set: 3,
+    price: 180,
+    mortgage: 90,
+    house: 100,
+    hotel: 100,
+    rent: {
+        0: 14,
+        1: 70,
+        2: 200,
+        3: 550,
+        4: 750,
+        5: 950,
     },
-    9: {
-        name: "Marlborough Street",
-        color: "#e69709",
-        colorText: "#000000",
-        set: 3,
-        price: 180,
-        mortgage: 90,
-        house: 100,
-        hotel: 100,
-        rent: {
-            0: 14,
-            1: 70,
-            2: 200,
-            3: 550,
-            4: 750,
-            5: 950,
-        },
+}, {
+    name: "Marlborough Street",
+    color: "#e69709",
+    colorText: "#000000",
+    set: 3,
+    price: 180,
+    mortgage: 90,
+    house: 100,
+    hotel: 100,
+    rent: {
+        0: 14,
+        1: 70,
+        2: 200,
+        3: 550,
+        4: 750,
+        5: 950,
     },
-    10: {
-        name: "Vine Street",
-        color: "#e69709",
-        colorText: "#000000",
-        set: 3,
-        price: 200,
-        mortgage: 100,
-        house: 100,
-        hotel: 100,
-        rent: {
-            0: 16,
-            1: 80,
-            2: 220,
-            3: 600,
-            4: 800,
-            5: 1000,
-        },
+}, {
+    name: "Vine Street",
+    color: "#e69709",
+    colorText: "#000000",
+    set: 3,
+    price: 200,
+    mortgage: 100,
+    house: 100,
+    hotel: 100,
+    rent: {
+        0: 16,
+        1: 80,
+        2: 220,
+        3: 600,
+        4: 800,
+        5: 1000,
     },
-    11: {
-        name: "The Strand",
-        color: "#d83302",
-        colorText: "#ffffff",
-        set: 4,
-        price: 220,
-        mortgage: 110,
-        house: 150,
-        hotel: 150,
-        rent: {
-            0: 18,
-            1: 90,
-            2: 250,
-            3: 700,
-            4: 875,
-            5: 1050,
-        },
+}, {
+    name: "The Strand",
+    color: "#d83302",
+    colorText: "#ffffff",
+    set: 4,
+    price: 220,
+    mortgage: 110,
+    house: 150,
+    hotel: 150,
+    rent: {
+        0: 18,
+        1: 90,
+        2: 250,
+        3: 700,
+        4: 875,
+        5: 1050,
     },
-    12: {
-        name: "Fleet Street",
-        color: "#d83302",
-        colorText: "#ffffff",
-        set: 4,
-        price: 220,
-        mortgage: 110,
-        house: 150,
-        hotel: 150,
-        rent: {
-            0: 18,
-            1: 90,
-            2: 250,
-            3: 700,
-            4: 875,
-            5: 1050,
-        },
+}, {
+    name: "Fleet Street",
+    color: "#d83302",
+    colorText: "#ffffff",
+    set: 4,
+    price: 220,
+    mortgage: 110,
+    house: 150,
+    hotel: 150,
+    rent: {
+        0: 18,
+        1: 90,
+        2: 250,
+        3: 700,
+        4: 875,
+        5: 1050,
     },
-    13: {
-        name: "Trafalgar Square",
-        color: "#d83302",
-        colorText: "#ffffff",
-        set: 4,
-        price: 240,
-        mortgage: 120,
-        house: 150,
-        hotel: 150,
-        rent: {
-            0: 20,
-            1: 100,
-            2: 300,
-            3: 750,
-            4: 925,
-            5: 1100,
-        },
+}, {
+    name: "Trafalgar Square",
+    color: "#d83302",
+    colorText: "#ffffff",
+    set: 4,
+    price: 240,
+    mortgage: 120,
+    house: 150,
+    hotel: 150,
+    rent: {
+        0: 20,
+        1: 100,
+        2: 300,
+        3: 750,
+        4: 925,
+        5: 1100,
     },
-    14: {
-        name: "Leicester Square",
-        color: "#ecf002",
-        colorText: "#000000",
-        set: 5,
-        price: 260,
-        mortgage: 130,
-        house: 150,
-        hotel: 150,
-        rent: {
-            0: 22,
-            1: 110,
-            2: 330,
-            3: 800,
-            4: 975,
-            5: 1150,
-        },
+}, {
+    name: "Leicester Square",
+    color: "#ecf002",
+    colorText: "#000000",
+    set: 5,
+    price: 260,
+    mortgage: 130,
+    house: 150,
+    hotel: 150,
+    rent: {
+        0: 22,
+        1: 110,
+        2: 330,
+        3: 800,
+        4: 975,
+        5: 1150,
     },
-    15: {
-        name: "Coventry Street",
-        color: "#ecf002",
-        colorText: "#000000",
-        set: 5,
-        price: 260,
-        mortgage: 130,
-        house: 150,
-        hotel: 150,
-        rent: {
-            0: 22,
-            1: 110,
-            2: 330,
-            3: 800,
-            4: 975,
-            5: 1150,
-        },
+}, {
+    name: "Coventry Street",
+    color: "#ecf002",
+    colorText: "#000000",
+    set: 5,
+    price: 260,
+    mortgage: 130,
+    house: 150,
+    hotel: 150,
+    rent: {
+        0: 22,
+        1: 110,
+        2: 330,
+        3: 800,
+        4: 975,
+        5: 1150,
     },
-    16: {
-        name: "Piccadilly",
-        color: "#ecf002",
-        colorText: "#000000",
-        set: 5,
-        price: 280,
-        mortgage: 140,
-        house: 150,
-        hotel: 150,
-        rent: {
-            0: 24,
-            1: 120,
-            2: 360,
-            3: 850,
-            4: 1025,
-            5: 1200,
-        },
+}, {
+    name: "Piccadilly",
+    color: "#ecf002",
+    colorText: "#000000",
+    set: 5,
+    price: 280,
+    mortgage: 140,
+    house: 150,
+    hotel: 150,
+    rent: {
+        0: 24,
+        1: 120,
+        2: 360,
+        3: 850,
+        4: 1025,
+        5: 1200,
     },
-    17: {
-        name: "Regent Street",
-        color: "#41c011",
-        colorText: "#ffffff",
-        set: 6,
-        price: 300,
-        mortgage: 150,
-        house: 200,
-        hotel: 200,
-        rent: {
-            0: 26,
-            1: 130,
-            2: 390,
-            3: 900,
-            4: 1100,
-            5: 1275,
-        },
+}, {
+    name: "Regent Street",
+    color: "#41c011",
+    colorText: "#ffffff",
+    set: 6,
+    price: 300,
+    mortgage: 150,
+    house: 200,
+    hotel: 200,
+    rent: {
+        0: 26,
+        1: 130,
+        2: 390,
+        3: 900,
+        4: 1100,
+        5: 1275,
     },
-    18: {
-        name: "Oxford Street",
-        color: "#41c011",
-        colorText: "#ffffff",
-        set: 6,
-        price: 300,
-        mortgage: 150,
-        house: 200,
-        hotel: 200,
-        rent: {
-            0: 26,
-            1: 130,
-            2: 390,
-            3: 900,
-            4: 1100,
-            5: 1275,
-        },
+}, {
+    name: "Oxford Street",
+    color: "#41c011",
+    colorText: "#ffffff",
+    set: 6,
+    price: 300,
+    mortgage: 150,
+    house: 200,
+    hotel: 200,
+    rent: {
+        0: 26,
+        1: 130,
+        2: 390,
+        3: 900,
+        4: 1100,
+        5: 1275,
     },
-    19: {
-        name: "Bond Street",
-        color: "#41c011",
-        colorText: "#ffffff",
-        set: 6,
-        price: 320,
-        mortgage: 160,
-        house: 200,
-        hotel: 200,
-        rent: {
-            0: 28,
-            1: 150,
-            2: 450,
-            3: 1000,
-            4: 1200,
-            5: 1400,
-        },
+}, {
+    name: "Bond Street",
+    color: "#41c011",
+    colorText: "#ffffff",
+    set: 6,
+    price: 320,
+    mortgage: 160,
+    house: 200,
+    hotel: 200,
+    rent: {
+        0: 28,
+        1: 150,
+        2: 450,
+        3: 1000,
+        4: 1200,
+        5: 1400,
     },
-    20: {
-        name: "Park Lane",
-        color: "#475c9c",
-        colorText: "#ffffff",
-        set: 7,
-        price: 350,
-        mortgage: 175,
-        house: 200,
-        hotel: 200,
-        rent: {
-            0: 35,
-            1: 175,
-            2: 500,
-            3: 1100,
-            4: 1300,
-            5: 1500,
-        },
+}, {
+    name: "Park Lane",
+    color: "#475c9c",
+    colorText: "#ffffff",
+    set: 7,
+    price: 350,
+    mortgage: 175,
+    house: 200,
+    hotel: 200,
+    rent: {
+        0: 35,
+        1: 175,
+        2: 500,
+        3: 1100,
+        4: 1300,
+        5: 1500,
     },
-    21: {
-        name: "Mayfair",
-        color: "#475c9c",
-        colorText: "#ffffff",
-        set: 7,
-        price: 400,
-        mortgage: 200,
-        house: 200,
-        hotel: 200,
-        rent: {
-            0: 50,
-            1: 200,
-            2: 600,
-            3: 1400,
-            4: 1700,
-            5: 2000,
-        },
+}, {
+    name: "Mayfair",
+    color: "#475c9c",
+    colorText: "#ffffff",
+    set: 7,
+    price: 400,
+    mortgage: 200,
+    house: 200,
+    hotel: 200,
+    rent: {
+        0: 50,
+        1: 200,
+        2: 600,
+        3: 1400,
+        4: 1700,
+        5: 2000,
     },
-    22: {
-        name: "King's Cross Station",
-        color: "#ffffff",
-        colorText: "#000000",
-        set: 8,
-        price: 200,
-        mortgage: 100,
-        isStation: true,
-        rent: {
-            1: 25,
-            2: 50,
-            3: 100,
-            4: 200,
-        },
+}, {
+    name: "King's Cross Station",
+    color: "#ffffff",
+    colorText: "#000000",
+    set: 8,
+    price: 200,
+    mortgage: 100,
+    isStation: true,
+    rent: {
+        1: 25,
+        2: 50,
+        3: 100,
+        4: 200,
     },
-    23: {
-        name: "Marylebone Station",
-        color: "#ffffff",
-        colorText: "#000000",
-        set: 8,
-        price: 200,
-        mortgage: 100,
-        isStation: true,
-        rent: {
-            1: 25,
-            2: 50,
-            3: 100,
-            4: 200,
-        },
+}, {
+    name: "Marylebone Station",
+    color: "#ffffff",
+    colorText: "#000000",
+    set: 8,
+    price: 200,
+    mortgage: 100,
+    isStation: true,
+    rent: {
+        1: 25,
+        2: 50,
+        3: 100,
+        4: 200,
     },
-    24: {
-        name: "Fenchurch Street Station",
-        color: "#ffffff",
-        colorText: "#000000",
-        set: 8,
-        price: 200,
-        mortgage: 100,
-        isStation: true,
-        rent: {
-            1: 25,
-            2: 50,
-            3: 100,
-            4: 200,
-        },
+}, {
+    name: "Fenchurch Street Station",
+    color: "#ffffff",
+    colorText: "#000000",
+    set: 8,
+    price: 200,
+    mortgage: 100,
+    isStation: true,
+    rent: {
+        1: 25,
+        2: 50,
+        3: 100,
+        4: 200,
     },
-    25: {
-        name: "Liverpool Street Station",
-        color: "#ffffff",
-        colorText: "#000000",
-        set: 8,
-        price: 200,
-        mortgage: 100,
-        isStation: true,
-        rent: {
-            1: 25,
-            2: 50,
-            3: 100,
-            4: 200,
-        },
+}, {
+    name: "Liverpool Street Station",
+    color: "#ffffff",
+    colorText: "#000000",
+    set: 8,
+    price: 200,
+    mortgage: 100,
+    isStation: true,
+    rent: {
+        1: 25,
+        2: 50,
+        3: 100,
+        4: 200,
     },
-    26: {
-        name: "Electric Company",
-        color: "#eaa377",
-        colorText: "#000000",
-        set: 9,
-        price: 150,
-        mortgage: 75,
-        isUtility: true,
-        rent: {
-            1: 4,
-            2: 10,
-        },
+}, {
+    name: "Electric Company",
+    color: "#eaa377",
+    colorText: "#000000",
+    set: 9,
+    price: 150,
+    mortgage: 75,
+    isUtility: true,
+    rent: {
+        1: 4,
+        2: 10,
     },
-    27: {
-        name: "Water Works",
-        color: "#eaa377",
-        colorText: "#000000",
-        set: 9,
-        price: 150,
-        mortgage: 75,
-        isUtility: true,
-        rent: {
-            1: 4,
-            2: 10,
-        },
-    }
-}
+}, {
+    name: "Water Works",
+    color: "#eaa377",
+    colorText: "#000000",
+    set: 9,
+    price: 150,
+    mortgage: 75,
+    isUtility: true,
+    rent: {
+        1: 4,
+        2: 10,
+    },
+}]
 
 export function Game_Monopoly() {
     const params = useParams();
@@ -514,6 +487,7 @@ export function Game_Monopoly() {
     const [allUserData, setAllUserData] = useState();
     const [userProperties, setUserProperties] = useState();
     const [purposedTrades, setPurposedTrades] = useState([]);
+    const [purposedSales, setPurposedSales] = useState([]);
     const [mode, setMode] = useState();
 
     useEffect(() => {
@@ -522,30 +496,57 @@ export function Game_Monopoly() {
         // const gamePromise = getGameInfo(params.gameID)
 
         const unsubscribe = onSnapshot(doc(db, "games", params.gameID), (doc) => {
-            console.log("Current data: ", doc.data());
+            const data = doc.data()
+            console.log("Current data: ", data);
 
-            setGameData(doc.data().data);
-            setGameInfo(doc.data().info);
-            setUserData(doc.data().userData[currentUser.uid]);
-            setAllUserData(doc.data().userData);
-            setGamePlayers(Object.keys(doc.data().userData));
-            setUserProperties(doc.data().userData[currentUser.uid].properties.sort((a, b) => a - b));
-            setCreatedDate(new Date(doc.data().info.dates.createdAt.toString()));
-
-            if (doc.data().data.transactions) {
-                doc.data().data.transactions.map((item, index) => {
-                    if (item.type === "trade" && item.users.to === currentUser.uid && item.status === "purposed") {
-                        var arr = purposedTrades;
-                        arr.push(item)
-                        setPurposedTrades(arr)
-                        document.body.classList.add("modal-trade-request-visible")
-                    }
-                })
-            }
+            setGameData(data.data);
+            setGameInfo(data.info);
+            setUserData(data.userData[currentUser.uid]);
+            setAllUserData(data.userData);
+            setGamePlayers(Object.keys(data.userData));
+            setUserProperties(data.userData[currentUser.uid].properties.sort((a, b) => a - b));
+            setCreatedDate(new Date(data.info.dates.createdAt.toString()));
         });
 
-        return () => unsubscribe()
+        return () => {
+            unsubscribe()
+            setGameData();
+            setGameInfo();
+            setUserData();
+            setAllUserData();
+            setGamePlayers();
+            setUserProperties();
+            setCreatedDate();
+        }
     }, [params.gameID, currentUser])
+
+    useEffect(() => {
+        console.log(gameData)
+        if (!gameData || !gameData.transactions) return
+
+        var trades = [];
+        var sales = [];
+
+        gameData.transactions.map((item, index) => {
+            if (item.type === "trade" && item.users.to === currentUser.uid && item.status === "purposed") {
+                trades.push(item)
+                setPurposedTrades(trades)
+                document.body.classList.add("modal-trade-request-visible")
+            } else if (item.type === "sale" && item.users.to === currentUser.uid && item.status === "purposed") {
+                sales.push(item)
+                setPurposedSales(sales)
+                console.log(sales)
+                document.body.classList.add("modal-sale-request-visible")
+            }
+        })
+
+        return () => {
+            setPurposedTrades([])
+            setPurposedSales([])
+            document.body.classList.remove("modal-trade-request-visible")
+            document.body.classList.remove("modal-sale-request-visible")
+        }
+    }, [gameData])
 
     const formatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -564,6 +565,7 @@ export function Game_Monopoly() {
                         <h2>Banker's Controls</h2>
                         <ul>
                             <button type="control" onClick={() => { document.body.classList.add("modal-goPass-visible") }}>Pass Go</button>
+                            <button type="control" onClick={() => { document.body.classList.add("modal-property-sell-visible") }}>Sell Property</button>
                         </ul>
                     </div>
                     <div className="separator" />
@@ -679,7 +681,9 @@ export function Game_Monopoly() {
                     <Modal_Pay ids={gamePlayers} gameID={params.gameID} userData={allUserData} gameData={gameData} currentUser={currentUser} />
                     <Modal_Trade ids={gamePlayers} gameID={params.gameID} userData={allUserData} gameData={gameData} currentUser={currentUser} />
                     {purposedTrades.length > 0 && <Modal_Trade_Purposed purposedTrades={purposedTrades} gameID={params.gameID} userData={allUserData} gameData={gameData} currentUser={currentUser} />}
+                    {purposedSales.length > 0 && <Modal_Sale_Purposed purposedSales={purposedSales} gameID={params.gameID} userData={allUserData} gameData={gameData} currentUser={currentUser} />}
                     <Modal_Gamemaster_GoPass ids={gamePlayers} gameID={params.gameID} userData={allUserData} gameData={gameData} gameInfo={gameInfo} currentUser={currentUser} />
+                    <Modal_Gamemaster_PropertySell ids={gamePlayers} gameID={params.gameID} userData={allUserData} gameData={gameData} gameInfo={gameInfo} currentUser={currentUser} />
                 </div>}
             </section>
         </>}
@@ -728,7 +732,7 @@ export function Game_New_Monopoly() {
             id: "Monopoly-Create-Game",
             className: "toast-item",
             position: "bottom-center",
-        });        
+        });
     }
 
     return <>
@@ -1085,6 +1089,8 @@ function Modal_Trade_Purposed(props) {
     useEffect(() => {
         console.log(props.purposedTrades, props.purposedTrades[0])
         setTrade(props.purposedTrades[0])
+
+        return () => {setTrade()}
     }, [props.purposedTrades])
 
     useEffect(() => {
@@ -1185,7 +1191,6 @@ function Modal_Trade_Purposed(props) {
         if (e) {
             e.preventDefault();
         }
-        document.body.classList.remove("modal-trade-request-visible")
     }
 
     return <>
@@ -1256,6 +1261,108 @@ function Modal_Trade_Purposed(props) {
     </>
 }
 
+function Modal_Sale_Purposed(props) {
+    const [sale, setSale] = useState();
+    const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        console.log(props.purposedSales, props.purposedSales[0])
+        setSale(props.purposedSales[0])
+
+        return () => {setSale()}
+    }, [props.purposedSales])
+
+    const handleAccept = (e) => {
+        e.preventDefault();
+
+        const promise = game_sale_confirm(props.gameID, props.userData, props.gameData, sale, setLoading);
+
+        promise.catch(err => {
+            console.error(err)
+            return
+        })
+
+        promise.then(res => {
+            handleClose()
+            return
+        })
+
+        toast.promise(promise, {
+            loading: 'Accepting Sale!',
+            success: 'Sale Complete!',
+            error: 'Sale Error!',
+        }, {
+            id: "Monopoly-Sale-Accept",
+            className: "toast-item",
+            position: "bottom-center",
+        });
+    }
+
+    const handleDecline = (e) => {
+        e.preventDefault();
+
+        const promise = game_sale_decline(props.gameID, props.gameData, sale, setLoading);
+
+        promise.catch(err => {
+            console.error(err)
+            return
+        })
+
+        promise.then(res => {
+            handleClose()
+            return
+        })
+
+        toast.promise(promise, {
+            loading: 'Declining Sale!',
+            success: 'Sale Declined!',
+            error: 'Sale Error!',
+        }, {
+            id: "Monopoly-Sale-Decline",
+            className: "toast-item",
+            position: "bottom-center",
+        });
+    }
+
+    const handleClose = (e) => {
+        if (e) {
+            e.preventDefault();
+        }
+        console.log(props.purposedSales)
+        if (props.purposedSales[0] === undefined) {
+            document.body.classList.remove("modal-sale-request-visible")
+        }
+    }
+
+    return <>
+        <div className="modal" id="sale-request" >
+            <form className="container">
+                <button type="cancel" onClick={handleDecline} tabIndex={2}>
+                    <span className="material-symbols-outlined">close</span>
+                </button>
+                {sale && <>
+                    <span className="title">Buy Property?</span>
+                    {sale.sale.property && <div className="selected-property" style={{ "--background-color": properties[sale.sale.property].color, "--foreground-color": properties[sale.sale.property].colorText }}>
+                        <span className="title">
+                            {properties[sale.sale.property].isStation && <>Station</>}
+                            {properties[sale.sale.property].isUtility && <>Utility</>}
+                            {!properties[sale.sale.property].isUtility && !properties[sale.sale.property].isStation && <>Title Deed</>}
+                        </span>
+                        <span className="name">{properties[sale.sale.property].name}</span>
+                    </div>}
+                    {console.log(sale.sale.amount)}
+                    <input type="number" readOnly value={sale.sale.amount} tabIndex={-1} />
+                    <div className="side-by-side">
+                        <button type="decline" disabled={loading} tabIndex={1} onClick={handleDecline}>Decline</button>
+                        <button type="accept" disabled={loading} tabIndex={1} onClick={handleAccept}>Accept</button>
+                    </div>
+                </>}
+            </form>
+        </div>
+        <div className="modal-overlay" id="for-sale-request" onClick={handleDecline} />
+    </>
+}
+
 function Modal_Gamemaster_GoPass(props) {
     const [recipient, setRecipient] = useState("")
     const [recipientData, setRecipientData] = useState()
@@ -1273,6 +1380,11 @@ function Modal_Gamemaster_GoPass(props) {
             setLoadingData(false)
         })
 
+        promise.catch(err => {
+            console.error(err)
+            return
+        })
+
         return () => {
             setRecipientData("")
         }
@@ -1286,7 +1398,7 @@ function Modal_Gamemaster_GoPass(props) {
         toast.promise(promise, {
             loading: 'Confirming Transaction!',
             success: 'Transaction Complete!',
-            error: 'promise Error!',
+            error: 'Transaction Error!',
         }, {
             id: "Monopoly-Pay",
             className: "toast-item",
@@ -1294,16 +1406,14 @@ function Modal_Gamemaster_GoPass(props) {
         });
 
         promise.then(res => {
-            if (res.isSuccess) {
-                setRecipient("")
-                document.body.classList.remove("modal-goPass-visible")
-                return
-            }
+            setRecipient("")
+            document.body.classList.remove("modal-goPass-visible")
+            return
+        })
 
-            if (res.isError) {
-                // handle Error
-                return
-            }
+        promise.catch(err => {
+            console.error(err)
+            return
         })
     }
 
@@ -1343,6 +1453,166 @@ function Modal_Gamemaster_GoPass(props) {
                 </form>
             </div>
             <div className="modal-overlay" id="for-goPass" onClick={(e) => { e.preventDefault(); setRecipient(""); document.body.classList.remove("modal-goPass-visible") }} />
+        </>}
+    </>
+}
+
+function Modal_Gamemaster_PropertySell(props) {
+    const [recipient, setRecipient] = useState("")
+    const [recipientData, setRecipientData] = useState()
+    const [property, setProperty] = useState()
+    const [amount, setAmount] = useState()
+    const [state, setState] = useState(0)
+    const [loading, setLoading] = useState(false)
+    const [loadingData, setLoadingData] = useState(false)
+
+    useEffect(() => {
+        if (recipient === "" || recipient === "bank" || !recipient) return
+
+        setLoadingData(true)
+        const promise = getUserInfo(recipient)
+
+        promise.then(res => {
+            setRecipientData(res)
+            setLoadingData(false)
+        })
+
+        promise.catch(err => {
+            console.error(err)
+            return
+        })
+
+        return () => {
+            setRecipientData("")
+        }
+    }, [recipient])
+
+    useEffect(() => {
+        if (!property) {
+            setAmount()
+            return
+        }
+
+        setAmount(properties[property].price);
+    }, [property])
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const promise = game_sale_purpose(props.gameID, props.gameData, recipient, {
+            amount: amount,
+            property: property,
+        }, setLoading);
+
+        toast.promise(promise, {
+            loading: 'Confirming Transaction!',
+            success: 'Transaction Complete!',
+            error: 'Transaction Error!',
+        }, {
+            id: "Monopoly-Pay",
+            className: "toast-item",
+            position: "bottom-center",
+        });
+
+        promise.then(res => {
+            handleClose()
+            return
+        })
+
+        promise.catch(err => {
+            console.error(err)
+            return
+        })
+    }
+
+    const handleClose = (e) => {
+        if (e) { e.preventDefault(); }
+
+        setRecipient("");
+        setProperty();
+        setState(0);
+        setAmount()
+
+        document.body.classList.remove("modal-property-sell-visible")
+        return
+    }
+
+    return <>
+        {props.currentUser.uid === props.gameInfo.gameMaster && <>
+            <div className="modal" id="property-sell">
+                <form className="container" onSubmit={handleSubmit}>
+                    <button type="cancel" tabIndex={2} onClick={handleClose}>
+                        <span className="material-symbols-outlined">close</span>
+                    </button>
+                    {recipient !== "" && !recipientData && loadingData && <>
+                        <Modal_Part_Loading />
+                    </>}
+                    {recipientData && property && state === 1 && <>
+                        <span className="title">Confirm?</span>
+                        <button className="recipient" onClick={(e) => { e.preventDefault(); setRecipient("") }}>
+                            <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
+                            <div className="about">
+                                <span className="name">{recipientData.about.firstname} {recipientData.about.lastname}</span>
+                                <span className="display">{recipientData.about.displayname}</span>
+                                <span className="hover">Change</span>
+                                <span className="icon-hover">Change</span>
+                            </div>
+                        </button>
+                        <button className="selected-property" id={"property-" + property} style={{ "--background-color": properties[property].color, "--foreground-color": properties[property].colorText }} onClick={(e) => {
+                            e.preventDefault();
+                            setState(0)
+                        }}>
+                            <span className="title">
+                                {properties[property].isStation && <>Station</>}
+                                {properties[property].isUtility && <>Utility</>}
+                                {!properties[property].isUtility && !properties[property].isStation && <>Title Deed</>}
+                            </span>
+                            <span className="name">{properties[property].name}</span>
+                            <span className="hover">Change</span>
+                            <span className="icon-hover">Change</span>
+                        </button>
+                        <input type="number" step={1} onChange={(e) => { e.preventDefault(); setAmount(e.target.value) }} value={amount} required min={1} max={props.userData[props.currentUser.uid].money} placeholder="100" />
+                        <button type="submit" disabled={loading}>Pay!</button>
+                    </>}
+                    {recipientData && state === 0 && <>
+                        <span className="title">Which property?</span>
+                        <ul className="properties">
+                            {properties && properties.sort((a, b) => a - b).map((item, index) => {
+                                if (props.gameData.properties.includes(index)) {
+                                    return <Fragment key={index} />
+                                }
+                                return <button key={index} className="item" id={"property-" + index} style={{ "--background-color": item.color, "--foreground-color": item.colorText }} onClick={async (e) => {
+                                    e.preventDefault();
+                                    if (property) {
+                                        document.querySelector("#property-" + property).classList.remove("selected");
+                                    }
+                                    setProperty(index);
+                                    document.querySelector("#property-" + index).classList.add("selected")
+                                }}>
+                                    <span className="title">
+                                        {item.isStation && <>Station</>}
+                                        {item.isUtility && <>Utility</>}
+                                        {!item.isUtility && !item.isStation && <>Title Deed</>}
+                                    </span>
+                                    <span className="name">{item.name}</span>
+                                </button>
+                            })}
+                        </ul>
+                        <button type="continue" disabled={!property} onClick={(e) => { e.preventDefault(); setState(1) }}>Continue</button>
+                    </>}
+                    {recipient === "" && props.ids && <>
+                        <span className="title">Who's buying the property?</span>
+                        <ul className="userList">
+                            {props.ids.sort((a, b) => a.localeCompare(b)).map((player, index) => {
+                                return <button key={index} onClick={() => setRecipient(player)} type="select">
+                                    <Modal_Part_Player id={player} />
+                                </button>
+                            })}
+                        </ul>
+                    </>}
+                </form>
+            </div>
+            <div className="modal-overlay" id="for-property-sell" onClick={handleClose} />
         </>}
     </>
 }

@@ -245,7 +245,7 @@ export async function game_confirm_trade(gameID, userData, gameData, trade, setL
             })
             if (setLoading) setLoading(false);
             console.log("Game updated (gM): " + tradeData.users.from + " => " + tradeData.users.to);
-            return
+            return Promise.resolve()
         } catch (e) {
             console.error("Error updating game (gM): ", e);
             if (setLoading) setLoading(false);
@@ -310,6 +310,117 @@ export async function game_goPass(gameID, userData, gameData, gameInfo, receivin
         })
         if (setLoading) setLoading(false);
         console.log("Game updated (gM): goPass => £" + gameInfo.values.goPass + " => " + receivingUserID);
+        return
+    } catch (e) {
+        console.error("Error updating game (gM): ", e);
+        if (setLoading) setLoading(false);
+        return Promise.reject(e)
+    }
+}
+
+export async function game_sale_purpose(gameID, gameData, receivingUserID, saleData, setLoading) {
+    if (setLoading) setLoading(true);
+
+    var modGameData = gameData;
+
+    if (modGameData.transactions === undefined) {
+        modGameData.transactions = [];
+    }
+
+    modGameData.transactions.push({
+        type: "sale",
+        date: new Date().getTime().toString(),
+        sale: saleData,
+        users: {
+            to: receivingUserID,
+        },
+        status: "purposed",
+    })
+
+    try {
+        await updateDoc(doc(db, "games", gameID), {
+            data: modGameData,
+        })
+        if (setLoading) setLoading(false);
+        console.log("Game updated (gM): Sale Proposal Sent =>" + receivingUserID);
+        return
+    } catch (e) {
+        console.error("Error updating game (gM): ", e);
+        if (setLoading) setLoading(false);
+        return Promise.reject(e)
+    }
+}
+
+export async function game_sale_confirm(gameID, userData, gameData, sale, setLoading) {
+    if (setLoading) setLoading(true);
+
+    var isError = false;
+    var modUserData = userData;
+    var modGameData = gameData;
+    var saleData;
+
+    modGameData.transactions.map((item, index) => {
+        if (item.date === sale.date) {
+            saleData = item;
+            modGameData.transactions[index].status = "confirmed"
+            return
+        }
+    })
+
+    if (parseFloat(modUserData[saleData.users.to].money) - parseFloat(saleData.sale.amount) < 0) {
+        isError = true;
+    }
+
+    modUserData[saleData.users.to].money = parseFloat(modUserData[saleData.users.to].money) - parseFloat(saleData.sale.amount);
+
+    if (saleData.sale.property) {
+        if (modGameData.properties.includes(saleData.sale.property)) {
+            isError = true;
+            return
+        } else {
+            modGameData.properties.push(saleData.sale.property)
+            modUserData[saleData.users.to].properties.push(saleData.sale.property)
+        }
+    }
+
+    if (!isError) {
+        try {
+            await updateDoc(doc(db, "games", gameID), {
+                userData: modUserData,
+                data: modGameData,
+            })
+            if (setLoading) setLoading(false);
+            console.log("Game updated (gM): Sale Confirmed => " + saleData.users.to);
+            return Promise.resolve()
+        } catch (e) {
+            console.error("Error updating game (gM): ", e);
+            if (setLoading) setLoading(false);
+            return Promise.reject(e)
+        }
+    } else {
+        if (setLoading) setLoading(false);
+        return Promise.reject({ code: 400, message: "Request had bad syntax or was impossible to fulfill" })
+        // return Error({ isError: true, code: 400, message: "Request had bad syntax or was impossible to fulfill" })
+    }
+}
+
+export async function game_sale_decline(gameID, gameData, sale, setLoading) {
+    if (setLoading) setLoading(true);
+
+    var modGameData = gameData;
+    modGameData.transactions.map((item, index) => {
+        if (item.date === sale.date) {
+            modGameData.transactions[index].status = "declined"
+            return
+        }
+    })
+
+    try {
+        await updateDoc(doc(db, "games", gameID), {
+            data: modGameData,
+        })
+        if (setLoading) setLoading(false);
+        console.log("Game updated (gM): Sale Declined =X=> " + sale.users.to);
         return
     } catch (e) {
         console.error("Error updating game (gM): ", e);
