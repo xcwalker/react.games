@@ -44,7 +44,7 @@
 }
 
 /*** form default ***/
-#monopoly div.modal form {
+#monopoly div.modal .container {
     /* sizing */
     width: 100%;
     padding: 10px;
@@ -78,7 +78,7 @@
 }
 
 /*** UserList ***/
-#monopoly div.modal form ul.userList {
+#monopoly div.modal .container ul.userList {
     /* sizing */
     margin: 0;
     padding: 0;
@@ -89,7 +89,7 @@
     gap: 10px;
 }
 
-#monopoly div.modal form ul.userList button[type="select"] {
+#monopoly div.modal .container ul.userList button[type="select"] {
     /* sizing */
     width: 100%;
     height: 64px;
@@ -109,14 +109,14 @@
     color: var(--foreground-color-100);
 }
 
-#monopoly div.modal form ul.userList button[type="select"]:hover,
-#monopoly div.modal form ul.userList button[type="select"]:focus-visible {
+#monopoly div.modal .container ul.userList button[type="select"]:hover,
+#monopoly div.modal .container ul.userList button[type="select"]:focus-visible {
     border: 2px solid var(--foreground-color-100);
     background-color: var(--foreground-color-100);
     color: var(--form-color-selector);
 }
 
-#monopoly div.modal form ul.userList button[type="select"] img {
+#monopoly div.modal .container ul.userList button[type="select"] img {
     /* sizing */
     --size: 50px;
     height: var(--size);
@@ -127,7 +127,7 @@
     object-fit: cover;
 }
 
-#monopoly div.modal form ul.userList button[type="select"] .about {
+#monopoly div.modal .container ul.userList button[type="select"] .about {
     /* flex */
     display: flex;
     flex-direction: column;
@@ -136,7 +136,7 @@
     gap: 2px;
 }
 
-#monopoly div.modal form ul.userList button[type="select"] .about span.display {
+#monopoly div.modal .container ul.userList button[type="select"] .about span.display {
     /* text */
     font-size: 12px;
     font-weight: 500;
@@ -154,12 +154,12 @@
     color: var(--foreground-color-400);
 }
 
-#monopoly div.modal form ul.userList button[type="select"]:hover .about span.display,
-#monopoly div.modal form ul.userList button[type="select"]:focus-visible .about span.display {
+#monopoly div.modal .container ul.userList button[type="select"]:hover .about span.display,
+#monopoly div.modal .container ul.userList button[type="select"]:focus-visible .about span.display {
     color: inherit;
 }
 
-#monopoly div.modal form ul.userList button[type="select"] .about span.name {
+#monopoly div.modal .container ul.userList button[type="select"] .about span.name {
     /* text */
     font-size: 22px;
     font-weight: 700;
@@ -361,7 +361,7 @@
 }
 
 /*** continue button ***/
-#monopoly div.modal form button[type="continue"] {
+#monopoly div.modal .container button[type="continue"] {
     /* sizing */
     height: 40px;
 
@@ -387,25 +387,25 @@
     transition: var(--quick-transition-translate), var(--quick-transition-opacity);
 }
 
-#monopoly div.modal form button[type="continue"]:hover,
-#monopoly div.modal form button[type="continue"]:focus-visible {
+#monopoly div.modal .container button[type="continue"]:hover,
+#monopoly div.modal .container button[type="continue"]:focus-visible {
     color: var(--form-color-selector);
     background-color: var(--foreground-color-200);
 }
 
-#monopoly div.modal form button[type="continue"]:focus-visible {
+#monopoly div.modal .container button[type="continue"]:focus-visible {
     outline: 2px solid var(--form-color-selector);
     outline-offset: 2px;
 }
 
-#monopoly div.modal form button[type="continue"]:disabled {
+#monopoly div.modal .container button[type="continue"]:disabled {
     background-color: var(--background-color-300);
     color: var(--foreground-color-500);
     cursor: default;
 }
 
 /*** submit button ***/
-#monopoly div.modal form button[type="submit"] {
+#monopoly div.modal .container button[type="submit"] {
     /* sizing */
     height: 40px;
 
@@ -431,13 +431,13 @@
     transition: var(--quick-transition-translate), var(--quick-transition-opacity);
 }
 
-#monopoly div.modal form button[type="submit"]:hover,
-#monopoly div.modal form button[type="submit"]:focus-visible {
+#monopoly div.modal .container button[type="submit"]:hover,
+#monopoly div.modal .container button[type="submit"]:focus-visible {
     color: var(--form-color-selector);
     background-color: var(--foreground-color-200);
 }
 
-#monopoly div.modal form button[type="submit"]:focus-visible {
+#monopoly div.modal .container button[type="submit"]:focus-visible {
     outline: 2px solid var(--form-color-selector);
     outline-offset: 2px;
 }

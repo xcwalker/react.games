@@ -34,9 +34,14 @@ export function useAuth(falseValue) {
 export async function getUserInfo(userID) {
     try {
         const docSnap = await getDoc(doc(db, "users", userID));
-        return docSnap.data();
+        if (docSnap.data() === undefined) {
+            return Promise.reject("No User Found")
+        } else {
+            return Promise.resolve(docSnap.data());
+        }
     } catch (e) {
         console.error("Error getting user: ", e);
+        return Promise.reject({ message: "Error Getting User", error: e })
     }
 }
 
@@ -56,7 +61,7 @@ export async function getMultipleUsersInfo(userArrayID) {
 }
 
 
-export async function createGame(gameData, userData, gameSettings, currentUser, setLoading) {
+export async function createGame(gameData, userData, gameSettings, gameValues, currentUser, setLoading) {
     const date = new Date();
 
     if (setLoading) setLoading(true);
@@ -68,7 +73,8 @@ export async function createGame(gameData, userData, gameSettings, currentUser, 
                 settings: gameSettings,
                 dates: {
                     createdAt: date.toJSON(),
-                }
+                },
+                values: gameValues,
             },
             userData: userData
         });
@@ -254,7 +260,6 @@ export async function game_confirm_trade(gameID, userData, gameData, trade, setL
     } else {
         if (setLoading) setLoading(false);
         return Promise.reject({ code: 400, message: "Request had bad syntax or was impossible to fulfill" })
-        // return Error({ isError: true, code: 400, message: "Request had bad syntax or was impossible to fulfill" })
     }
 }
 
@@ -280,6 +285,112 @@ export async function game_decline_trade(gameID, gameData, trade, setLoading) {
         console.error("Error updating game (gM): ", e);
         if (setLoading) setLoading(false);
         return Promise.reject(e)
+    }
+}
+
+export async function game_mortgage(gameID, gameData, userData, userID, propertyID, propertyData, setLoading) {
+    if (setLoading) setLoading(true);
+
+    var isError = false;
+    var modUserData = userData;
+    var modGameData = gameData;
+
+    modUserData[userID].money = parseFloat(userData[userID].money) + parseFloat(propertyData.mortgage);
+
+    if (modGameData.transactions === undefined) {
+        modGameData.transactions = [];
+    }
+
+    modGameData.transactions.push({
+        type: "unmortgage",
+        amount: propertyData.mortgage,
+        property: propertyID,
+        users: {
+            to: userID,
+        }
+    })
+
+    if (modGameData.mortgages === undefined) {
+        modGameData.mortgages = [];
+    }
+
+    if (modGameData.mortgages.includes(propertyID) || !userData[userID].properties.includes(propertyID)) {
+        isError = true;
+    }
+
+    modGameData.mortgages.push(propertyID)
+
+    if (!isError) {
+        try {
+            await updateDoc(doc(db, "games", gameID), {
+                userData: modUserData,
+                data: modGameData,
+            })
+            if (setLoading) setLoading(false);
+            console.log("Game updated (gM): Property Mortgaged £" + propertyData.mortgage + " => " + userID);
+            return
+        } catch (e) {
+            console.error("Error updating game (gM): ", e);
+            if (setLoading) setLoading(false);
+            return Promise.reject(e)
+        }
+    } else {
+        if (setLoading) setLoading(false);
+        return Promise.reject({ code: 400, message: "Request had bad syntax or was impossible to fulfill" })
+    }
+}
+
+export async function game_unmortgage(gameID, gameData, userData, userID, propertyID, propertyData, setLoading) {
+    if (setLoading) setLoading(true);
+
+    var isError = false;
+    var modUserData = userData;
+    var modGameData = gameData;
+
+    if (parseFloat(userData[userID].money) - parseFloat(propertyData.mortgage) < 0) {
+        isError = true;
+    }
+
+    modUserData[userID].money = parseFloat(userData[userID].money) - parseFloat(propertyData.mortgage);
+
+    if (modGameData.transactions === undefined) {
+        modGameData.transactions = [];
+    }
+
+    modGameData.transactions.push({
+        type: "mortgage",
+        amount: propertyData.mortgage,
+        users: {
+            to: userID,
+        }
+    })
+
+    if (!modGameData.mortgages.includes(propertyID) || !userData[userID].properties.includes(propertyID)) {
+        isError = true;
+    }
+
+    const index = modGameData.mortgages.indexOf(propertyID);
+    if (index > -1) { // only splice array when item is found
+        modGameData.mortgages.splice(index, 1); // 2nd parameter means remove one item only
+    }
+
+    if (!isError) {
+        try {
+            await updateDoc(doc(db, "games", gameID), {
+                userData: modUserData,
+                data: modGameData,
+            })
+            if (setLoading) setLoading(false);
+            console.log("Game updated (gM): Property Mortgaged £" + propertyData.mortgage + " => " + userID);
+            return
+        } catch (e) {
+            console.error("Error updating game (gM): ", e);
+            if (setLoading) setLoading(false);
+            return Promise.reject(e)
+        }
+    } else {
+        if (setLoading) setLoading(false);
+        return Promise.reject({ code: 400, message: "Request had bad syntax or was impossible to fulfill" })
     }
 }
 

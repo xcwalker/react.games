@@ -1,10 +1,11 @@
 import { Fragment, useEffect, useState } from "react"
 import { Navigate, useParams } from "react-router-dom";
-import { db, createGame, useAuth, getUserInfo, getMultipleUsersInfo, game_pay, game_goPass, game_purpose_trade, game_confirm_trade, game_decline_trade, game_sale_purpose, game_sale_confirm, game_sale_decline } from "../firebase";
+import { db, createGame, useAuth, getUserInfo, getMultipleUsersInfo, game_pay, game_goPass, game_purpose_trade, game_confirm_trade, game_decline_trade, game_sale_purpose, game_sale_confirm, game_sale_decline, game_mortgage, game_unmortgage } from "../firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 
 import "../style/monopoly/index.css"
+import "../style/monopoly/new.css"
 import "../style/monopoly/banker.css"
 import "../style/monopoly/player.css"
 import "../style/monopoly/properties.css"
@@ -14,10 +15,14 @@ import "../style/monopoly/modal/loading.css"
 import "../style/monopoly/modal/pay.css"
 import "../style/monopoly/modal/trade.css"
 import "../style/monopoly/modal/trade-request.css"
+import "../style/monopoly/modal/mortgage.css"
+import "../style/monopoly/modal/unmortgage.css"
 import "../style/monopoly/modal/goPass.css"
 import "../style/monopoly/modal/property-sell.css"
 import "../style/monopoly/modal/sale-request.css"
+import "../style/monopoly/modal/qr.css"
 import { Page_Loading } from "../components/page/page-loading";
+import QRCode from "react-qr-code";
 
 const properties = [{
     name: "Old Kent Road",
@@ -566,6 +571,7 @@ export function Game_Monopoly() {
                         <ul>
                             <button type="control" onClick={() => { document.body.classList.add("modal-goPass-visible") }}>Pass Go</button>
                             <button type="control" onClick={() => { document.body.classList.add("modal-property-sell-visible") }}>Sell Property</button>
+                            <button type="control" onClick={() => { document.body.classList.add("modal-qr-visible") }}>QR Code</button>
                         </ul>
                     </div>
                     <div className="separator" />
@@ -580,6 +586,8 @@ export function Game_Monopoly() {
                         <ul>
                             <button type="control" onClick={() => { document.body.classList.add("modal-pay-visible") }}>Pay</button>
                             <button type="control" onClick={() => { document.body.classList.add("modal-trade-visible") }}>Trade</button>
+                            <button type="control" onClick={() => { document.body.classList.add("modal-mortgage-visible") }}>Mortgage</button>
+                            <button type="control" onClick={() => { document.body.classList.add("modal-unmortgage-visible") }}>Unmortgage</button>
                         </ul>
                     </div>
                     <div className="properties">
@@ -587,6 +595,47 @@ export function Game_Monopoly() {
                         {userProperties && userProperties.length === 0 && <div>You have no properties</div>}
                         {userProperties && userProperties.length > 0 && <ul>
                             {userProperties.map((item, index) => {
+                                if (gameData.mortgages.includes(item)) {
+                                    return <Fragment key={index}>
+                                        {!properties[item].isStation && !properties[item].isUtility && <li className="property">
+                                            <div className="top" style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }}>
+                                                <span className="title">Title Deed</span>
+                                                <span className="name">{properties[item].name}</span>
+                                            </div>
+                                            <div className="bottom">
+                                                <div className="mortgaged">
+                                                    <span>Mortgaged</span>
+                                                </div>
+                                                <div className="costs">
+                                                    <div className="mortgage">
+                                                        <span>Mortgage Value </span>
+                                                        <span className="price">£{properties[item].mortgage}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>}
+                                        {properties[item].isStation && <li className="station">
+                                            <div className="top" style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }}>
+                                                <span className="title">Station</span>
+                                                <span className="name">{properties[item].name}</span>
+                                            </div>
+                                            <div className="bottom">
+                                                <div className="mortgaged">
+                                                    <span>Mortgaged</span>
+                                                </div>
+                                                <div className="costs">
+                                                    <div className="mortgage">
+                                                        <span>Mortgage Value </span>
+                                                        <span className="price">£{properties[item].mortgage}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>}
+                                        {properties[item].isUtility && <>
+                                        </>}
+                                    </Fragment>
+                                }
+
                                 return <Fragment key={index}>
                                     {!properties[item].isStation && !properties[item].isUtility && <li className="property">
                                         <div className="top" style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }}>
@@ -680,8 +729,11 @@ export function Game_Monopoly() {
                     </div>
                     <Modal_Pay ids={gamePlayers} gameID={params.gameID} userData={allUserData} gameData={gameData} currentUser={currentUser} />
                     <Modal_Trade ids={gamePlayers} gameID={params.gameID} userData={allUserData} gameData={gameData} currentUser={currentUser} />
+                    <Modal_QR />
                     {purposedTrades.length > 0 && <Modal_Trade_Purposed purposedTrades={purposedTrades} gameID={params.gameID} userData={allUserData} gameData={gameData} currentUser={currentUser} />}
                     {purposedSales.length > 0 && <Modal_Sale_Purposed purposedSales={purposedSales} gameID={params.gameID} userData={allUserData} gameData={gameData} currentUser={currentUser} />}
+                    <Modal_Mortgage gameID={params.gameID} gameData={gameData} userData={allUserData} currentUser={currentUser} />
+                    <Modal_Unmortgage gameID={params.gameID} gameData={gameData} userData={allUserData} currentUser={currentUser} />
                     <Modal_Gamemaster_GoPass ids={gamePlayers} gameID={params.gameID} userData={allUserData} gameData={gameData} gameInfo={gameInfo} currentUser={currentUser} />
                     <Modal_Gamemaster_PropertySell ids={gamePlayers} gameID={params.gameID} userData={allUserData} gameData={gameData} gameInfo={gameInfo} currentUser={currentUser} />
                 </div>}
@@ -689,6 +741,9 @@ export function Game_Monopoly() {
         </>}
         {!currentUser && currentUser !== null && <>
             <Page_Loading />
+        </>}
+        {currentUser && !userData && <>
+            User Not In Game
         </>}
         {error && <>
             Error: {error.code}
@@ -703,17 +758,35 @@ export function Game_New_Monopoly() {
     const currentUser = useAuth(null);
     const [ID, setID] = useState();
     const [error, setError] = useState();
+    const [loading, setLoading] = useState(false);
+    const [users, setUsers] = useState([])
+    const [addUser, setAddUser] = useState("")
+    const [startingMoney, setStartingMoney] = useState(1500)
+    const [goPass, setGoPass] = useState(200)
+    const [startingValues, setStartingValues] = useState({
+        money: startingMoney,
+        properties: [],
+        cards: [],
+    })
 
-    const newGame = () => {
-        const promise = createGame({}, {
-            [currentUser.uid]: {
-                money: 1500,
-                properties: [
-                    0, 15, 21
-                ],
-                cards: [],
-            }
-        }, {}, currentUser)
+    const newGame = async (e) => {
+        e.preventDefault();
+
+        var userData = {};
+
+        userData[currentUser.uid] = startingValues;
+
+        users.map(user => {
+            userData[user] = startingValues;
+        })
+
+        const promise = createGame({
+            mortgages: [],
+            properties: [],
+            transactions: [],
+        }, userData, {}, {
+            goPass: goPass,
+        }, currentUser)
 
         promise.then(res => {
             setID(res.id)
@@ -737,7 +810,68 @@ export function Game_New_Monopoly() {
 
     return <>
         {ID && <Navigate to={"./" + ID} />}
-        <button onClick={newGame}>Click Me!</button>
+        {currentUser && <>
+            <section className="new-game" id="monopoly">
+                <form className="container">
+                    <h1>Monopoly</h1>
+                    <h2>New Game</h2>
+                    <ul className="players">
+                        <div className="player">
+                            <Modal_Part_Player id={currentUser.uid} />
+                        </div>
+                        {users.length > 0 && users.map((player, index) => {
+                            return <button key={index} className="player" disabled={loading}>
+                                <Modal_Part_Player id={player} />
+                            </button>
+                        })}
+                    </ul>
+                    <div className="input">
+                        <input type="text" name="user-input" id="user-input" placeholder="User ID" onChange={(e) => { setAddUser(e.target.value) }} value={addUser} />
+                        <button type="add" onClick={(e) => {
+                            e.preventDefault();
+                            setLoading(true)
+                            const promise = getUserInfo(addUser)
+                            toast.promise(promise, {
+                                loading: 'Checking User!',
+                                success: 'User Added!',
+                                error: 'Error Adding User!',
+                            }, {
+                                id: "Monopoly-Create-Game",
+                                className: "toast-item",
+                                position: "bottom-center",
+                            });
+                            promise.then(res => {
+                                var arr = users;
+                                arr.push(addUser)
+                                setUsers(arr)
+                                setAddUser("")
+                                setLoading(false)
+                                return
+                            })
+                            promise.catch(res => {
+                                setLoading(false)
+                                return
+                            })
+                        }}>
+                            <span className="material-symbols-outlined">
+                                add
+                            </span>
+                        </button>
+                    </div>
+                    <div className="side-by-side">
+                        <div className="side">
+                            <label htmlFor="starting-cash">Starting Cash</label>
+                            <input type="number" name="starting-cash" id="starting-cash" value={startingMoney} onChange={(e) => { e.preventDefault(); setStartingMoney(e.target.value) }} />
+                        </div>
+                        <div className="side">
+                            <label htmlFor="pass-go">Pass Go</label>
+                            <input type="number" name="pass-go" id="pass-go" value={goPass} onChange={(e) => { e.preventDefault(); setGoPass(e.target.value) }} />
+                        </div>
+                    </div>
+                    <button type="submit" onClick={newGame}>Create Game!</button>
+                </form>
+            </section>
+        </>}
     </>
 }
 
@@ -1029,6 +1163,7 @@ function Modal_Trade(props) {
                                             {properties[item].isStation && <>Station</>}
                                             {properties[item].isUtility && <>Utility</>}
                                             {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
+                                            <> £{properties[item].price}</>
                                         </span>
                                         <span className="name">{properties[item].name}</span>
                                     </button>
@@ -1053,6 +1188,7 @@ function Modal_Trade(props) {
                                             {properties[item].isStation && <>Station</>}
                                             {properties[item].isUtility && <>Utility</>}
                                             {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
+                                            <> £{properties[item].price}</>
                                         </span>
                                         <span className="name">{properties[item].name}</span>
                                     </button>
@@ -1090,7 +1226,7 @@ function Modal_Trade_Purposed(props) {
         console.log(props.purposedTrades, props.purposedTrades[0])
         setTrade(props.purposedTrades[0])
 
-        return () => {setTrade()}
+        return () => { setTrade() }
     }, [props.purposedTrades])
 
     useEffect(() => {
@@ -1269,7 +1405,7 @@ function Modal_Sale_Purposed(props) {
         console.log(props.purposedSales, props.purposedSales[0])
         setSale(props.purposedSales[0])
 
-        return () => {setSale()}
+        return () => { setSale() }
     }, [props.purposedSales])
 
     const handleAccept = (e) => {
@@ -1350,7 +1486,6 @@ function Modal_Sale_Purposed(props) {
                         </span>
                         <span className="name">{properties[sale.sale.property].name}</span>
                     </div>}
-                    {console.log(sale.sale.amount)}
                     <input type="number" readOnly value={sale.sale.amount} tabIndex={-1} />
                     <div className="side-by-side">
                         <button type="decline" disabled={loading} tabIndex={1} onClick={handleDecline}>Decline</button>
@@ -1360,6 +1495,237 @@ function Modal_Sale_Purposed(props) {
             </form>
         </div>
         <div className="modal-overlay" id="for-sale-request" onClick={handleDecline} />
+    </>
+}
+
+function Modal_Mortgage(props) {
+    const [property, setProperty] = useState()
+    const [state, setState] = useState(0)
+    const [loading, setLoading] = useState(0)
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const promise = game_mortgage(props.gameID, props.gameData, props.userData, props.currentUser.uid, property, properties[property], setLoading)
+
+        toast.promise(promise, {
+            loading: 'Sending Proposal!',
+            success: 'Proposal Sent!',
+            error: 'Proposal Error!',
+        }, {
+            id: "Monopoly-Proposal-Send",
+            className: "toast-item",
+            position: "bottom-center",
+        });
+
+        promise.then(res => {
+            handleClose()
+            return
+        })
+
+        promise.catch(err => {
+            console.error(err)
+            return
+        })
+    }
+
+    const handleClose = (e) => {
+        if (e) {
+            e.preventDefault();
+        }
+        setProperty();
+        document.body.classList.remove("modal-mortgage-visible")
+    }
+
+    return <>
+        <div className="modal" id="mortgage">
+            <div className="container">
+                <form onSubmit={handleSubmit}>
+                    <button type="cancel" onClick={handleClose}>
+                        <span className="material-symbols-outlined">close</span>
+                    </button>
+                    {property && state === 1 && <>
+                        <span className="title">Confirm?</span>
+                        {property && <button className="selected-property" style={{ "--background-color": properties[property].color, "--foreground-color": properties[property].colorText }} onClick={(e) => { e.preventDefault(); setState(0) }}>
+                            <span className="title">
+                                {properties[property].isStation && <>Station</>}
+                                {properties[property].isUtility && <>Utility</>}
+                                {!properties[property].isUtility && !properties[property].isStation && <>Title Deed</>}
+                            </span>
+                            <span className="name">{properties[property].name}</span>
+                        </button>}
+                        <input type="number" readOnly value={properties[property].mortgage} tabIndex={-1} />
+                        <button type="submit" disabled={loading}>Mortgage</button>
+                    </>}
+                    {state === 0 && <>
+                        <span className="title">What property is being mortgaged?</span>
+                        <ul className="properties">
+                            {props.userData && props.userData[props.currentUser.uid].properties.sort((a, b) => a - b).map((item, index) => {
+                                if (props.gameData.mortgages !== undefined && props.gameData.mortgages.includes(item)) {
+                                    return <Fragment key={index} />
+                                }
+
+                                if (item === property) {
+                                    return <button key={index} className="item selected" id={"mortgage-property-" + item} style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }} onClick={async (e) => {
+                                        e.preventDefault();
+                                        if (property) {
+                                            console.log("#mortgage-property-" + property)
+                                            document.querySelector("#mortgage-property-" + property).classList.remove("selected");
+                                        }
+                                        setProperty(item);
+                                        console.log("#mortgage-property-" + item)
+                                        document.querySelector("#mortgage-property-" + item).classList.add("selected")
+                                    }}>
+                                        <span className="title">
+                                            {properties[item].isStation && <>Station</>}
+                                            {properties[item].isUtility && <>Utility</>}
+                                            {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
+                                        </span>
+                                        <span className="name">{properties[item].name}</span>
+                                    </button>
+                                }
+
+                                return <button key={index} className="item" id={"mortgage-property-" + item} style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }} onClick={async (e) => {
+                                    e.preventDefault();
+                                    if (property) {
+                                        console.log("#mortgage-property-" + property)
+                                        document.querySelector("#mortgage-property-" + property).classList.remove("selected");
+                                    }
+                                    setProperty(item);
+                                    console.log("#mortgage-property-" + item)
+                                    document.querySelector("#mortgage-property-" + item).classList.add("selected")
+                                }}>
+                                    <span className="title">
+                                        {properties[item].isStation && <>Station</>}
+                                        {properties[item].isUtility && <>Utility</>}
+                                        {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
+                                    </span>
+                                    <span className="name">{properties[item].name}</span>
+                                </button>
+                            })}
+                        </ul>
+                        <button type="continue" disabled={!property} onClick={(e) => { e.preventDefault(); setState(1) }}>Continue</button>
+                    </>}
+                </form>
+            </div>
+        </div>
+        <div className="modal-overlay" id="for-mortgage" onClick={handleClose} />
+    </>
+}
+
+function Modal_Unmortgage(props) {
+    const [property, setProperty] = useState()
+    const [state, setState] = useState(0)
+    const [loading, setLoading] = useState(0)
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const promise = game_unmortgage(props.gameID, props.gameData, props.userData, props.currentUser.uid, property, properties[property], setLoading)
+
+        toast.promise(promise, {
+            loading: 'Sending Proposal!',
+            success: 'Proposal Sent!',
+            error: 'Proposal Error!',
+        }, {
+            id: "Monopoly-Proposal-Send",
+            className: "toast-item",
+            position: "bottom-center",
+        });
+
+        promise.then(res => {
+            handleClose()
+            return
+        })
+
+        promise.catch(err => {
+            console.error(err)
+            return
+        })
+    }
+
+    const handleClose = (e) => {
+        if (e) {
+            e.preventDefault();
+        }
+        setProperty();
+        setState(0)
+        document.body.classList.remove("modal-unmortgage-visible")
+    }
+
+    return <>
+        <div className="modal" id="unmortgage">
+            <div className="container">
+                <form onSubmit={handleSubmit}>
+                    <button type="cancel" onClick={handleClose}>
+                        <span className="material-symbols-outlined">close</span>
+                    </button>
+                    {property && state === 1 && <>
+                        <span className="title">Confirm?</span>
+                        {property && <button className="selected-property" style={{ "--background-color": properties[property].color, "--foreground-color": properties[property].colorText }} onClick={(e) => { e.preventDefault(); setState(0) }}>
+                            <span className="title">
+                                {properties[property].isStation && <>Station</>}
+                                {properties[property].isUtility && <>Utility</>}
+                                {!properties[property].isUtility && !properties[property].isStation && <>Title Deed</>}
+                            </span>
+                            <span className="name">{properties[property].name}</span>
+                        </button>}
+                        <input type="number" readOnly value={properties[property].mortgage} tabIndex={-1} />
+                        <button type="submit" disabled={loading}>Unmortgage</button>
+                    </>}
+                    {state === 0 && <>
+                        <span className="title">What property is being unmortgaged?</span>
+                        <ul className="properties">
+                            {props.userData && props.userData[props.currentUser.uid].properties.sort((a, b) => a - b).map((item, index) => {
+                                if (props.gameData.mortgages !== undefined && props.gameData.mortgages.includes(item)) {
+                                    if (item === property) {
+                                        return <button key={index} className="item selected" id={"unmortgage-property-" + item} style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }} onClick={async (e) => {
+                                            e.preventDefault();
+                                            if (property) {
+                                                console.log("#unmortgage-property-" + property)
+                                                document.querySelector("#unmortgage-property-" + property).classList.remove("selected");
+                                            }
+                                            setProperty(item);
+                                            console.log("#unmortgage-property-" + item)
+                                            document.querySelector("#unmortgage-property-" + item).classList.add("selected")
+                                        }}>
+                                            <span className="title">
+                                                {properties[item].isStation && <>Station</>}
+                                                {properties[item].isUtility && <>Utility</>}
+                                                {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
+                                            </span>
+                                            <span className="name">{properties[item].name}</span>
+                                        </button>
+                                    }
+
+                                    return <button key={index} className="item" id={"unmortgage-property-" + item} style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }} onClick={async (e) => {
+                                        e.preventDefault();
+                                        if (property) {
+                                            console.log("#unmortgage-property-" + property)
+                                            document.querySelector("#unmortgage-property-" + property).classList.remove("selected");
+                                        }
+                                        setProperty(item);
+                                        console.log("#unmortgage-property-" + item)
+                                        document.querySelector("#unmortgage-property-" + item).classList.add("selected")
+                                    }}>
+                                        <span className="title">
+                                            {properties[item].isStation && <>Station</>}
+                                            {properties[item].isUtility && <>Utility</>}
+                                            {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
+                                        </span>
+                                        <span className="name">{properties[item].name}</span>
+                                    </button>
+                                }
+
+                                return <Fragment key={index} />
+                            })}
+                        </ul>
+                        <button type="continue" disabled={!property} onClick={(e) => { e.preventDefault(); setState(1) }}>Continue</button>
+                    </>}
+                </form>
+            </div>
+        </div>
+        <div className="modal-overlay" id="for-unmortgage" onClick={handleClose} />
     </>
 }
 
@@ -1572,7 +1938,7 @@ function Modal_Gamemaster_PropertySell(props) {
                             <span className="icon-hover">Change</span>
                         </button>
                         <input type="number" step={1} onChange={(e) => { e.preventDefault(); setAmount(e.target.value) }} value={amount} required min={1} max={props.userData[props.currentUser.uid].money} placeholder="100" />
-                        <button type="submit" disabled={loading}>Pay!</button>
+                        <button type="submit" disabled={loading}>Sell</button>
                     </>}
                     {recipientData && state === 0 && <>
                         <span className="title">Which property?</span>
@@ -1581,6 +1947,24 @@ function Modal_Gamemaster_PropertySell(props) {
                                 if (props.gameData.properties.includes(index)) {
                                     return <Fragment key={index} />
                                 }
+                                if (index === property) {
+                                    return <button key={index} className="item selected" id={"property-" + index} style={{ "--background-color": item.color, "--foreground-color": item.colorText }} onClick={async (e) => {
+                                        e.preventDefault();
+                                        if (property) {
+                                            document.querySelector("#property-" + property).classList.remove("selected");
+                                        }
+                                        setProperty(index);
+                                        document.querySelector("#property-" + index).classList.add("selected")
+                                    }}>
+                                        <span className="title">
+                                            {item.isStation && <>Station</>}
+                                            {item.isUtility && <>Utility</>}
+                                            {!item.isUtility && !item.isStation && <>Title Deed</>}
+                                        </span>
+                                        <span className="name">{item.name}</span>
+                                    </button>
+                                }
+
                                 return <button key={index} className="item" id={"property-" + index} style={{ "--background-color": item.color, "--foreground-color": item.colorText }} onClick={async (e) => {
                                     e.preventDefault();
                                     if (property) {
@@ -1614,6 +1998,62 @@ function Modal_Gamemaster_PropertySell(props) {
             </div>
             <div className="modal-overlay" id="for-property-sell" onClick={handleClose} />
         </>}
+    </>
+}
+
+function Modal_QR(props) {
+    const params = useParams();
+
+    return <>
+        <div className="modal" id="qr">
+            <div className="container">
+                <button type="cancel" onClick={(e) => { e.preventDefault(); document.body.classList.remove("modal-qr-visible") }}>
+                    <span className="material-symbols-outlined">close</span>
+                </button>
+                <div className="side-by-side">
+                    <div className="side">
+                        <QRCode value={"https://reactgames.xcwalker.dev/monopoly/" + params.gameID} bgColor="var(--background-color-200)" fgColor="var(--foreground-color-200)" />
+                    </div>
+                    <div className="side">
+                        <div className="gamecode">
+                            <span className="subTitle">Gamecode</span>
+                            <div className="overflow">
+                                <span className="code">{params.gameID}</span>
+                            </div>
+                            <button type="copy" onClick={(e) => {
+                                e.preventDefault(); navigator.clipboard.writeText(params.gameID); toast.success("Gamecode written to clipboard", {
+                                    id: "Monopoly-QR-Code-Copy",
+                                    className: "toast-item",
+                                    position: "bottom-center",
+                                })
+                            }}>
+                                <span className="material-symbols-outlined">
+                                    content_copy
+                                </span>
+                            </button>
+                        </div>
+                        <div className="url">
+                            <span className="subTitle">URL</span>
+                            <div className="overflow">
+                                <span className="url">https://reactgames.xcwalker.dev/monopoly/{params.gameID}</span>
+                            </div>
+                            <button type="copy" onClick={(e) => {
+                                e.preventDefault(); navigator.clipboard.writeText("https://reactgames.xcwalker.dev/monopoly/" + params.gameID); toast.success("URL written to clipboard", {
+                                    id: "Monopoly-QR-URL-Copy",
+                                    className: "toast-item",
+                                    position: "bottom-center",
+                                })
+                            }}>
+                                <span className="material-symbols-outlined">
+                                    content_copy
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div className="modal-overlay" id="for-qr" onClick={(e) => { e.preventDefault(); document.body.classList.remove("modal-qr-visible") }} />
     </>
 }
 

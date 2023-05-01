@@ -110,6 +110,38 @@
     align-items: center;
 }
 
+#monopoly .property .bottom .mortgaged {
+    /* position */
+    position: relative;
+
+    /* sizing */
+    width: 100%;
+    height: 100%;
+
+    /* flex */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#monopoly .property .bottom .mortgaged span {
+    /* position */
+    position: relative;
+
+    /* sizing */
+    padding: 0px 10px;
+
+    /* text */
+    font-size: 38px;
+    font-weight: 700;
+    text-transform: uppercase;
+
+    /* styling */
+    color: var(--form-color-invalid);
+    rotate: 25deg;
+    border: 5px solid currentColor;
+}
+
 #monopoly .property .bottom .rents {
     /* sizing */
     width: 100%;
