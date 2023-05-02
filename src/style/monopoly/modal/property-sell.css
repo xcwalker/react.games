@@ -1,18 +1,3 @@
-body.modal-property-sell-visible {
-    overflow-y: hidden;
-}
-
-body.modal-property-sell-visible #monopoly dialog.modal#property-sell {
-    /* hiding */
-    display: flex;
-}
-
-body.modal-property-sell-visible #monopoly dialog.modal-overlay#for-property-sell {
-    /* hiding */
-    pointer-events: auto;
-    opacity: 1;
-}
-
 /*** properties ***/
 #monopoly dialog.modal#property-sell .properties {
     /* spacing */

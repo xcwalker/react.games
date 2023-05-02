@@ -1,18 +1,3 @@
-body.modal-pay-visible {
-    overflow-y: hidden;
-}
-
-body.modal-pay-visible #monopoly dialog.modal#pay {
-    /* hiding */
-    display: flex;
-}
-
-body.modal-pay-visible #monopoly dialog.modal-overlay#for-pay {
-    /* hiding */
-    pointer-events: auto;
-    opacity: 1;
-}
-
 #monopoly dialog.modal#pay form button[type="bank"] {
     /* sizing */
     width: 100%;

@@ -1,18 +1,3 @@
-body.modal-unmortgage-visible {
-    overflow-y: hidden;
-}
-
-body.modal-unmortgage-visible #monopoly dialog.modal#unmortgage {
-    /* hiding */
-    display: flex;
-}
-
-body.modal-unmortgage-visible #monopoly dialog.modal-overlay#for-unmortgage {
-    /* hiding */
-    pointer-events: auto;
-    opacity: 1;
-}
-
 /*** properties ***/
 #monopoly dialog.modal#unmortgage .properties {
     /* spacing */

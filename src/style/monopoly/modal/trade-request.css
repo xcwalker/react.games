@@ -1,18 +1,3 @@
-body.modal-trade-request-visible {
-    overflow-y: hidden;
-}
-
-body.modal-trade-request-visible #monopoly dialog.modal#trade-request {
-    /* hiding */
-    display: flex;
-}
-
-body.modal-trade-request-visible #monopoly dialog.modal-overlay#for-trade-request {
-    /* hiding */
-    pointer-events: auto;
-    opacity: 1;
-}
-
 #monopoly dialog.modal#trade-request .side-by-side>div {
     /* flex */
     display: flex;

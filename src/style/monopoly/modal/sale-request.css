@@ -1,18 +1,3 @@
-body.modal-sale-request-visible {
-    overflow-y: hidden;
-}
-
-body.modal-sale-request-visible #monopoly dialog.modal#sale-request {
-    /* hiding */
-    display: flex;
-}
-
-body.modal-sale-request-visible #monopoly dialog.modal-overlay#for-sale-request {
-    /* hiding */
-    pointer-events: auto;
-    opacity: 1;
-}
-
 /*** selected property ***/
 #monopoly dialog.modal#sale-request .selected-property {
     /* position */
