@@ -1,26 +1,11 @@
-body.modal-trade-visible {
-    overflow-y: hidden;
-}
-
-body.modal-trade-visible #monopoly div.modal#trade {
-    /* hiding */
-    display: flex;
-}
-
-body.modal-trade-visible #monopoly div.modal-overlay#for-trade {
-    /* hiding */
-    pointer-events: auto;
-    opacity: 1;
-}
-
-#monopoly div.modal#trade .side-by-side>div {
+#monopoly dialog.modal#trade .side-by-side>div {
     /* flex */
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-#monopoly div.modal#trade .properties {
+#monopoly dialog.modal#trade .properties {
     /* spacing */
     margin: 0;
     padding: 0;
@@ -31,7 +16,7 @@ body.modal-trade-visible #monopoly div.modal-overlay#for-trade {
     gap: 5px;
 }
 
-#monopoly div.modal#trade .properties button[type="select"] {
+#monopoly dialog.modal#trade .properties button[type="select"] {
     /* position */
     position: relative;
 
@@ -49,12 +34,12 @@ body.modal-trade-visible #monopoly div.modal-overlay#for-trade {
     border: none;
 }
 
-#monopoly div.modal#trade .properties button[type="select"].selected {
+#monopoly dialog.modal#trade .properties button[type="select"].selected {
     background-color: var(--form-color-selector);
     color: var(--foreground-color-100);
 }
 
-#monopoly div.modal#trade .properties button[type="select"] span.title {
+#monopoly dialog.modal#trade .properties button[type="select"] span.title {
     /* position */
     position: absolute;
     top: 10px;
@@ -76,7 +61,7 @@ body.modal-trade-visible #monopoly div.modal-overlay#for-trade {
     transition: left 0.125s ease-in-out, translate 0.125s ease-in-out;
 }
 
-#monopoly div.modal#trade .properties button[type="select"] span.name {
+#monopoly dialog.modal#trade .properties button[type="select"] span.name {
     /* position */
     position: absolute;
     bottom: 0;
@@ -106,20 +91,20 @@ body.modal-trade-visible #monopoly div.modal-overlay#for-trade {
     transition: left 0.125s ease-in-out, translate 0.125s ease-in-out;
 }
 
-#monopoly div.modal#trade .properties button[type="select"]:focus-visible {
+#monopoly dialog.modal#trade .properties button[type="select"]:focus-visible {
     outline: 2px solid var(--form-color-selector);
     outline-offset: 2px;
 }
 
-#monopoly div.modal#trade .properties button[type="select"]:hover span.title,
-#monopoly div.modal#trade .properties button[type="select"]:focus-visible span.title,
-#monopoly div.modal#trade .properties button[type="select"]:hover span.name,
-#monopoly div.modal#trade .properties button[type="select"]:focus-visible span.name {
+#monopoly dialog.modal#trade .properties button[type="select"]:hover span.title,
+#monopoly dialog.modal#trade .properties button[type="select"]:focus-visible span.title,
+#monopoly dialog.modal#trade .properties button[type="select"]:hover span.name,
+#monopoly dialog.modal#trade .properties button[type="select"]:focus-visible span.name {
     left: 10px;
     translate: 0 0;
 }
 
-#monopoly div.modal#trade .paying-user .properties button[type="select"].selected::after {
+#monopoly dialog.modal#trade .paying-user .properties button[type="select"].selected::after {
     /* content */
     content: "arrow_forward";
 
@@ -127,7 +112,7 @@ body.modal-trade-visible #monopoly div.modal-overlay#for-trade {
     left: auto;
 }
 
-#monopoly div.modal#trade .receiving-user .properties button[type="select"].selected::after {
+#monopoly dialog.modal#trade .receiving-user .properties button[type="select"].selected::after {
     /* content */
     content: "arrow_back";
 
@@ -136,12 +121,12 @@ body.modal-trade-visible #monopoly div.modal-overlay#for-trade {
 }
 
 
-#monopoly div.modal#trade .receiving-user .properties button[type="select"].selected:hover span.title,
-#monopoly div.modal#trade .receiving-user .properties button[type="select"].selected:focus-visible span.title {
+#monopoly dialog.modal#trade .receiving-user .properties button[type="select"].selected:hover span.title,
+#monopoly dialog.modal#trade .receiving-user .properties button[type="select"].selected:focus-visible span.title {
     left: 22.5px;
 }
 
-#monopoly div.modal#trade .properties button[type="select"]::after {
+#monopoly dialog.modal#trade .properties button[type="select"]::after {
     /* Google Fonts */
     font-family: 'Material Symbols Outlined';
     font-weight: normal;

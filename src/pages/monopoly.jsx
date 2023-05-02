@@ -17,468 +17,469 @@ import "../style/monopoly/modal/trade.css"
 import "../style/monopoly/modal/trade-request.css"
 import "../style/monopoly/modal/mortgage.css"
 import "../style/monopoly/modal/unmortgage.css"
-import "../style/monopoly/modal/goPass.css"
 import "../style/monopoly/modal/property-sell.css"
 import "../style/monopoly/modal/sale-request.css"
 import "../style/monopoly/modal/qr.css"
 import { Page_Loading } from "../components/page/page-loading";
 import QRCode from "react-qr-code";
 
-const properties = [{
-    name: "Old Kent Road",
-    color: "#8d6a1a",
-    colorText: "#ffffff",
-    set: 0,
-    price: 60,
-    mortgage: 30,
-    house: 50,
-    hotel: 50,
-    rent: {
-        0: 2,
-        1: 10,
-        2: 30,
-        3: 90,
-        4: 160,
-        5: 250,
+const properties = [
+    {
+        name: "Old Kent Road",
+        color: "#8d6a1a",
+        colorText: "#ffffff",
+        set: 0,
+        price: 60,
+        mortgage: 30,
+        house: 50,
+        hotel: 50,
+        rent: {
+            0: 2,
+            1: 10,
+            2: 30,
+            3: 90,
+            4: 160,
+            5: 250,
+        },
+    }, {
+        name: "Whitechapel Road",
+        color: "#8d6a1a",
+        colorText: "#ffffff",
+        set: 0,
+        price: 60,
+        mortgage: 30,
+        house: 50,
+        hotel: 50,
+        rent: {
+            0: 4,
+            1: 20,
+            2: 60,
+            3: 180,
+            4: 320,
+            5: 450,
+        },
+    }, {
+        name: "The Angel Islington",
+        color: "#b8e0e7",
+        colorText: "#000000",
+        set: 1,
+        price: 100,
+        mortgage: 50,
+        house: 50,
+        hotel: 50,
+        rent: {
+            0: 6,
+            1: 30,
+            2: 90,
+            3: 270,
+            4: 400,
+            5: 550,
+        },
+    }, {
+        name: "Euston Road",
+        color: "#b8e0e7",
+        colorText: "#000000",
+        set: 1,
+        price: 100,
+        mortgage: 50,
+        house: 50,
+        hotel: 50,
+        rent: {
+            0: 6,
+            1: 30,
+            2: 90,
+            3: 270,
+            4: 400,
+            5: 550,
+        },
+    }, {
+        name: "Pentonville Road",
+        color: "#b8e0e7",
+        colorText: "#000000",
+        set: 1,
+        price: 120,
+        mortgage: 60,
+        house: 50,
+        hotel: 50,
+        rent: {
+            0: 8,
+            1: 40,
+            2: 100,
+            3: 300,
+            4: 450,
+            5: 600,
+        },
+    }, {
+        name: "Pall Mall",
+        color: "#ea4186",
+        colorText: "#ffffff",
+        set: 2,
+        price: 140,
+        mortgage: 70,
+        house: 100,
+        hotel: 100,
+        rent: {
+            0: 10,
+            1: 50,
+            2: 150,
+            3: 450,
+            4: 625,
+            5: 750,
+        },
+    }, {
+        name: "Whitehall",
+        color: "#ea4186",
+        colorText: "#ffffff",
+        set: 2,
+        price: 140,
+        mortgage: 70,
+        house: 100,
+        hotel: 100,
+        rent: {
+            0: 10,
+            1: 50,
+            2: 150,
+            3: 450,
+            4: 625,
+            5: 750,
+        },
+    }, {
+        name: "Northumberland Avenue",
+        color: "#ea4186",
+        colorText: "#ffffff",
+        set: 2,
+        price: 160,
+        mortgage: 80,
+        house: 100,
+        hotel: 100,
+        rent: {
+            0: 12,
+            1: 60,
+            2: 180,
+            3: 500,
+            4: 700,
+            5: 900,
+        },
+    }, {
+        name: "Bow Street",
+        color: "#e69709",
+        colorText: "#000000",
+        set: 3,
+        price: 180,
+        mortgage: 90,
+        house: 100,
+        hotel: 100,
+        rent: {
+            0: 14,
+            1: 70,
+            2: 200,
+            3: 550,
+            4: 750,
+            5: 950,
+        },
+    }, {
+        name: "Marlborough Street",
+        color: "#e69709",
+        colorText: "#000000",
+        set: 3,
+        price: 180,
+        mortgage: 90,
+        house: 100,
+        hotel: 100,
+        rent: {
+            0: 14,
+            1: 70,
+            2: 200,
+            3: 550,
+            4: 750,
+            5: 950,
+        },
+    }, {
+        name: "Vine Street",
+        color: "#e69709",
+        colorText: "#000000",
+        set: 3,
+        price: 200,
+        mortgage: 100,
+        house: 100,
+        hotel: 100,
+        rent: {
+            0: 16,
+            1: 80,
+            2: 220,
+            3: 600,
+            4: 800,
+            5: 1000,
+        },
+    }, {
+        name: "The Strand",
+        color: "#d83302",
+        colorText: "#ffffff",
+        set: 4,
+        price: 220,
+        mortgage: 110,
+        house: 150,
+        hotel: 150,
+        rent: {
+            0: 18,
+            1: 90,
+            2: 250,
+            3: 700,
+            4: 875,
+            5: 1050,
+        },
+    }, {
+        name: "Fleet Street",
+        color: "#d83302",
+        colorText: "#ffffff",
+        set: 4,
+        price: 220,
+        mortgage: 110,
+        house: 150,
+        hotel: 150,
+        rent: {
+            0: 18,
+            1: 90,
+            2: 250,
+            3: 700,
+            4: 875,
+            5: 1050,
+        },
+    }, {
+        name: "Trafalgar Square",
+        color: "#d83302",
+        colorText: "#ffffff",
+        set: 4,
+        price: 240,
+        mortgage: 120,
+        house: 150,
+        hotel: 150,
+        rent: {
+            0: 20,
+            1: 100,
+            2: 300,
+            3: 750,
+            4: 925,
+            5: 1100,
+        },
+    }, {
+        name: "Leicester Square",
+        color: "#ecf002",
+        colorText: "#000000",
+        set: 5,
+        price: 260,
+        mortgage: 130,
+        house: 150,
+        hotel: 150,
+        rent: {
+            0: 22,
+            1: 110,
+            2: 330,
+            3: 800,
+            4: 975,
+            5: 1150,
+        },
+    }, {
+        name: "Coventry Street",
+        color: "#ecf002",
+        colorText: "#000000",
+        set: 5,
+        price: 260,
+        mortgage: 130,
+        house: 150,
+        hotel: 150,
+        rent: {
+            0: 22,
+            1: 110,
+            2: 330,
+            3: 800,
+            4: 975,
+            5: 1150,
+        },
+    }, {
+        name: "Piccadilly",
+        color: "#ecf002",
+        colorText: "#000000",
+        set: 5,
+        price: 280,
+        mortgage: 140,
+        house: 150,
+        hotel: 150,
+        rent: {
+            0: 24,
+            1: 120,
+            2: 360,
+            3: 850,
+            4: 1025,
+            5: 1200,
+        },
+    }, {
+        name: "Regent Street",
+        color: "#41c011",
+        colorText: "#ffffff",
+        set: 6,
+        price: 300,
+        mortgage: 150,
+        house: 200,
+        hotel: 200,
+        rent: {
+            0: 26,
+            1: 130,
+            2: 390,
+            3: 900,
+            4: 1100,
+            5: 1275,
+        },
+    }, {
+        name: "Oxford Street",
+        color: "#41c011",
+        colorText: "#ffffff",
+        set: 6,
+        price: 300,
+        mortgage: 150,
+        house: 200,
+        hotel: 200,
+        rent: {
+            0: 26,
+            1: 130,
+            2: 390,
+            3: 900,
+            4: 1100,
+            5: 1275,
+        },
+    }, {
+        name: "Bond Street",
+        color: "#41c011",
+        colorText: "#ffffff",
+        set: 6,
+        price: 320,
+        mortgage: 160,
+        house: 200,
+        hotel: 200,
+        rent: {
+            0: 28,
+            1: 150,
+            2: 450,
+            3: 1000,
+            4: 1200,
+            5: 1400,
+        },
+    }, {
+        name: "Park Lane",
+        color: "#475c9c",
+        colorText: "#ffffff",
+        set: 7,
+        price: 350,
+        mortgage: 175,
+        house: 200,
+        hotel: 200,
+        rent: {
+            0: 35,
+            1: 175,
+            2: 500,
+            3: 1100,
+            4: 1300,
+            5: 1500,
+        },
+    }, {
+        name: "Mayfair",
+        color: "#475c9c",
+        colorText: "#ffffff",
+        set: 7,
+        price: 400,
+        mortgage: 200,
+        house: 200,
+        hotel: 200,
+        rent: {
+            0: 50,
+            1: 200,
+            2: 600,
+            3: 1400,
+            4: 1700,
+            5: 2000,
+        },
+    }, {
+        name: "King's Cross Station",
+        color: "#ffffff",
+        colorText: "#000000",
+        set: 8,
+        price: 200,
+        mortgage: 100,
+        isStation: true,
+        rent: {
+            1: 25,
+            2: 50,
+            3: 100,
+            4: 200,
+        },
+    }, {
+        name: "Marylebone Station",
+        color: "#ffffff",
+        colorText: "#000000",
+        set: 8,
+        price: 200,
+        mortgage: 100,
+        isStation: true,
+        rent: {
+            1: 25,
+            2: 50,
+            3: 100,
+            4: 200,
+        },
+    }, {
+        name: "Fenchurch Street Station",
+        color: "#ffffff",
+        colorText: "#000000",
+        set: 8,
+        price: 200,
+        mortgage: 100,
+        isStation: true,
+        rent: {
+            1: 25,
+            2: 50,
+            3: 100,
+            4: 200,
+        },
+    }, {
+        name: "Liverpool Street Station",
+        color: "#ffffff",
+        colorText: "#000000",
+        set: 8,
+        price: 200,
+        mortgage: 100,
+        isStation: true,
+        rent: {
+            1: 25,
+            2: 50,
+            3: 100,
+            4: 200,
+        },
+    }, {
+        name: "Electric Company",
+        color: "#eaa377",
+        colorText: "#000000",
+        set: 9,
+        price: 150,
+        mortgage: 75,
+        isUtility: true,
+        rent: {
+            1: 4,
+            2: 10,
+        },
+    }, {
+        name: "Water Works",
+        color: "#eaa377",
+        colorText: "#000000",
+        set: 9,
+        price: 150,
+        mortgage: 75,
+        isUtility: true,
+        rent: {
+            1: 4,
+            2: 10,
+        },
     },
-}, {
-    name: "Whitechapel Road",
-    color: "#8d6a1a",
-    colorText: "#ffffff",
-    set: 0,
-    price: 60,
-    mortgage: 30,
-    house: 50,
-    hotel: 50,
-    rent: {
-        0: 4,
-        1: 20,
-        2: 60,
-        3: 180,
-        4: 320,
-        5: 450,
-    },
-}, {
-    name: "The Angel Islington",
-    color: "#b8e0e7",
-    colorText: "#000000",
-    set: 1,
-    price: 100,
-    mortgage: 50,
-    house: 50,
-    hotel: 50,
-    rent: {
-        0: 6,
-        1: 30,
-        2: 90,
-        3: 270,
-        4: 400,
-        5: 550,
-    },
-}, {
-    name: "Euston Road",
-    color: "#b8e0e7",
-    colorText: "#000000",
-    set: 1,
-    price: 100,
-    mortgage: 50,
-    house: 50,
-    hotel: 50,
-    rent: {
-        0: 6,
-        1: 30,
-        2: 90,
-        3: 270,
-        4: 400,
-        5: 550,
-    },
-}, {
-    name: "Pentonville Road",
-    color: "#b8e0e7",
-    colorText: "#000000",
-    set: 1,
-    price: 120,
-    mortgage: 60,
-    house: 50,
-    hotel: 50,
-    rent: {
-        0: 8,
-        1: 40,
-        2: 100,
-        3: 300,
-        4: 450,
-        5: 600,
-    },
-}, {
-    name: "Pall Mall",
-    color: "#ea4186",
-    colorText: "#ffffff",
-    set: 2,
-    price: 140,
-    mortgage: 70,
-    house: 100,
-    hotel: 100,
-    rent: {
-        0: 10,
-        1: 50,
-        2: 150,
-        3: 450,
-        4: 625,
-        5: 750,
-    },
-}, {
-    name: "Whitehall",
-    color: "#ea4186",
-    colorText: "#ffffff",
-    set: 2,
-    price: 140,
-    mortgage: 70,
-    house: 100,
-    hotel: 100,
-    rent: {
-        0: 10,
-        1: 50,
-        2: 150,
-        3: 450,
-        4: 625,
-        5: 750,
-    },
-}, {
-    name: "Northumberland Avenue",
-    color: "#ea4186",
-    colorText: "#ffffff",
-    set: 2,
-    price: 160,
-    mortgage: 80,
-    house: 100,
-    hotel: 100,
-    rent: {
-        0: 12,
-        1: 60,
-        2: 180,
-        3: 500,
-        4: 700,
-        5: 900,
-    },
-}, {
-    name: "Bow Street",
-    color: "#e69709",
-    colorText: "#000000",
-    set: 3,
-    price: 180,
-    mortgage: 90,
-    house: 100,
-    hotel: 100,
-    rent: {
-        0: 14,
-        1: 70,
-        2: 200,
-        3: 550,
-        4: 750,
-        5: 950,
-    },
-}, {
-    name: "Marlborough Street",
-    color: "#e69709",
-    colorText: "#000000",
-    set: 3,
-    price: 180,
-    mortgage: 90,
-    house: 100,
-    hotel: 100,
-    rent: {
-        0: 14,
-        1: 70,
-        2: 200,
-        3: 550,
-        4: 750,
-        5: 950,
-    },
-}, {
-    name: "Vine Street",
-    color: "#e69709",
-    colorText: "#000000",
-    set: 3,
-    price: 200,
-    mortgage: 100,
-    house: 100,
-    hotel: 100,
-    rent: {
-        0: 16,
-        1: 80,
-        2: 220,
-        3: 600,
-        4: 800,
-        5: 1000,
-    },
-}, {
-    name: "The Strand",
-    color: "#d83302",
-    colorText: "#ffffff",
-    set: 4,
-    price: 220,
-    mortgage: 110,
-    house: 150,
-    hotel: 150,
-    rent: {
-        0: 18,
-        1: 90,
-        2: 250,
-        3: 700,
-        4: 875,
-        5: 1050,
-    },
-}, {
-    name: "Fleet Street",
-    color: "#d83302",
-    colorText: "#ffffff",
-    set: 4,
-    price: 220,
-    mortgage: 110,
-    house: 150,
-    hotel: 150,
-    rent: {
-        0: 18,
-        1: 90,
-        2: 250,
-        3: 700,
-        4: 875,
-        5: 1050,
-    },
-}, {
-    name: "Trafalgar Square",
-    color: "#d83302",
-    colorText: "#ffffff",
-    set: 4,
-    price: 240,
-    mortgage: 120,
-    house: 150,
-    hotel: 150,
-    rent: {
-        0: 20,
-        1: 100,
-        2: 300,
-        3: 750,
-        4: 925,
-        5: 1100,
-    },
-}, {
-    name: "Leicester Square",
-    color: "#ecf002",
-    colorText: "#000000",
-    set: 5,
-    price: 260,
-    mortgage: 130,
-    house: 150,
-    hotel: 150,
-    rent: {
-        0: 22,
-        1: 110,
-        2: 330,
-        3: 800,
-        4: 975,
-        5: 1150,
-    },
-}, {
-    name: "Coventry Street",
-    color: "#ecf002",
-    colorText: "#000000",
-    set: 5,
-    price: 260,
-    mortgage: 130,
-    house: 150,
-    hotel: 150,
-    rent: {
-        0: 22,
-        1: 110,
-        2: 330,
-        3: 800,
-        4: 975,
-        5: 1150,
-    },
-}, {
-    name: "Piccadilly",
-    color: "#ecf002",
-    colorText: "#000000",
-    set: 5,
-    price: 280,
-    mortgage: 140,
-    house: 150,
-    hotel: 150,
-    rent: {
-        0: 24,
-        1: 120,
-        2: 360,
-        3: 850,
-        4: 1025,
-        5: 1200,
-    },
-}, {
-    name: "Regent Street",
-    color: "#41c011",
-    colorText: "#ffffff",
-    set: 6,
-    price: 300,
-    mortgage: 150,
-    house: 200,
-    hotel: 200,
-    rent: {
-        0: 26,
-        1: 130,
-        2: 390,
-        3: 900,
-        4: 1100,
-        5: 1275,
-    },
-}, {
-    name: "Oxford Street",
-    color: "#41c011",
-    colorText: "#ffffff",
-    set: 6,
-    price: 300,
-    mortgage: 150,
-    house: 200,
-    hotel: 200,
-    rent: {
-        0: 26,
-        1: 130,
-        2: 390,
-        3: 900,
-        4: 1100,
-        5: 1275,
-    },
-}, {
-    name: "Bond Street",
-    color: "#41c011",
-    colorText: "#ffffff",
-    set: 6,
-    price: 320,
-    mortgage: 160,
-    house: 200,
-    hotel: 200,
-    rent: {
-        0: 28,
-        1: 150,
-        2: 450,
-        3: 1000,
-        4: 1200,
-        5: 1400,
-    },
-}, {
-    name: "Park Lane",
-    color: "#475c9c",
-    colorText: "#ffffff",
-    set: 7,
-    price: 350,
-    mortgage: 175,
-    house: 200,
-    hotel: 200,
-    rent: {
-        0: 35,
-        1: 175,
-        2: 500,
-        3: 1100,
-        4: 1300,
-        5: 1500,
-    },
-}, {
-    name: "Mayfair",
-    color: "#475c9c",
-    colorText: "#ffffff",
-    set: 7,
-    price: 400,
-    mortgage: 200,
-    house: 200,
-    hotel: 200,
-    rent: {
-        0: 50,
-        1: 200,
-        2: 600,
-        3: 1400,
-        4: 1700,
-        5: 2000,
-    },
-}, {
-    name: "King's Cross Station",
-    color: "#ffffff",
-    colorText: "#000000",
-    set: 8,
-    price: 200,
-    mortgage: 100,
-    isStation: true,
-    rent: {
-        1: 25,
-        2: 50,
-        3: 100,
-        4: 200,
-    },
-}, {
-    name: "Marylebone Station",
-    color: "#ffffff",
-    colorText: "#000000",
-    set: 8,
-    price: 200,
-    mortgage: 100,
-    isStation: true,
-    rent: {
-        1: 25,
-        2: 50,
-        3: 100,
-        4: 200,
-    },
-}, {
-    name: "Fenchurch Street Station",
-    color: "#ffffff",
-    colorText: "#000000",
-    set: 8,
-    price: 200,
-    mortgage: 100,
-    isStation: true,
-    rent: {
-        1: 25,
-        2: 50,
-        3: 100,
-        4: 200,
-    },
-}, {
-    name: "Liverpool Street Station",
-    color: "#ffffff",
-    colorText: "#000000",
-    set: 8,
-    price: 200,
-    mortgage: 100,
-    isStation: true,
-    rent: {
-        1: 25,
-        2: 50,
-        3: 100,
-        4: 200,
-    },
-}, {
-    name: "Electric Company",
-    color: "#eaa377",
-    colorText: "#000000",
-    set: 9,
-    price: 150,
-    mortgage: 75,
-    isUtility: true,
-    rent: {
-        1: 4,
-        2: 10,
-    },
-}, {
-    name: "Water Works",
-    color: "#eaa377",
-    colorText: "#000000",
-    set: 9,
-    price: 150,
-    mortgage: 75,
-    isUtility: true,
-    rent: {
-        1: 4,
-        2: 10,
-    },
-}]
+]
 
 export function Game_Monopoly() {
     const params = useParams();
@@ -536,20 +537,22 @@ export function Game_Monopoly() {
             if (item.type === "trade" && item.users.to === currentUser.uid && item.status === "purposed") {
                 trades.push(item)
                 setPurposedTrades(trades)
-                document.body.classList.add("modal-trade-request-visible")
             } else if (item.type === "sale" && item.users.to === currentUser.uid && item.status === "purposed") {
                 sales.push(item)
                 setPurposedSales(sales)
-                console.log(sales)
-                document.body.classList.add("modal-sale-request-visible")
             }
         })
 
         return () => {
             setPurposedTrades([])
             setPurposedSales([])
-            document.body.classList.remove("modal-trade-request-visible")
-            document.body.classList.remove("modal-sale-request-visible")
+            if (document.querySelector("dialog#trade-request")) {
+                document.querySelector("dialog#trade-request").close()
+            }
+
+            if (document.querySelector("dialog#sale-request")) {
+                document.querySelector("dialog#sale-request").close()
+            }
         }
     }, [gameData])
 
@@ -569,9 +572,9 @@ export function Game_Monopoly() {
                     <div className="container" id="banker">
                         <h2>Banker's Controls</h2>
                         <ul>
-                            <button type="control" onClick={() => { document.body.classList.add("modal-goPass-visible") }}>Pass Go</button>
-                            <button type="control" onClick={() => { document.body.classList.add("modal-property-sell-visible") }}>Sell Property</button>
-                            <button type="control" onClick={() => { document.body.classList.add("modal-qr-visible") }}>QR Code</button>
+                            <button type="control" onClick={() => { document.querySelector("dialog#goPass").showModal() }}>Pass Go</button>
+                            <button type="control" onClick={() => { document.querySelector("dialog#property-sell").showModal() }}>Sell Property</button>
+                            <button type="control" onClick={() => { document.querySelector("dialog#qr").showModal() }}>QR Code</button>
                         </ul>
                     </div>
                     <div className="separator" />
@@ -584,10 +587,10 @@ export function Game_Monopoly() {
                     <div className="controls">
                         <h2>Controls</h2>
                         <ul>
-                            <button type="control" onClick={() => { document.body.classList.add("modal-pay-visible") }}>Pay</button>
-                            <button type="control" onClick={() => { document.body.classList.add("modal-trade-visible") }}>Trade</button>
-                            <button type="control" onClick={() => { document.body.classList.add("modal-mortgage-visible") }}>Mortgage</button>
-                            <button type="control" onClick={() => { document.body.classList.add("modal-unmortgage-visible") }}>Unmortgage</button>
+                            <button type="control" onClick={() => { document.querySelector("dialog#pay").showModal() }}>Pay</button>
+                            <button type="control" onClick={() => { document.querySelector("dialog#trade").showModal() }}>Trade</button>
+                            <button type="control" onClick={() => { document.querySelector("dialog#mortgage").showModal() }}>Mortgage</button>
+                            <button type="control" onClick={() => { document.querySelector("dialog#unmortgage").showModal() }}>Unmortgage</button>
                         </ul>
                     </div>
                     <div className="properties">
@@ -812,7 +815,7 @@ export function Game_New_Monopoly() {
         {ID && <Navigate to={"./" + ID} />}
         {currentUser && <>
             <section className="new-game" id="monopoly">
-                <form className="container">
+                <form className="content">
                     <h1>Monopoly</h1>
                     <h2>New Game</h2>
                     <ul className="players">
@@ -940,72 +943,73 @@ function Modal_Pay(props) {
     }
 
     return <>
-        <div className="modal" id="pay">
-            <form className="container" onSubmit={handleSubmit}>
-                <button type="cancel" onClick={(e) => { e.preventDefault(); setRecipient(""); setAmount(); document.body.classList.remove("modal-pay-visible") }}>
-                    <span className="material-symbols-outlined">close</span>
-                </button>
-                {recipient !== "" && !recipientData && recipient !== "bank" && loadingData && <>
-                    <Modal_Part_Loading />
-                </>}
-                {(recipientData || recipient === "bank") && <>
-                    <span className="title">And How Much?</span>
-                    <button className="recipient" onClick={(e) => { e.preventDefault(); setRecipient(""); setAmount() }}>
-                        {recipient !== "bank" && <>
-                            <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
-                            <div className="about">
-                                <span className="name">{recipientData.about.firstname} {recipientData.about.lastname}</span>
-                                <span className="display">{recipientData.about.displayname}</span>
+        <dialog className="modal" id="pay">
+            <div className="container">
+                <form className="content" onSubmit={handleSubmit}>
+                    <button type="cancel" onClick={(e) => { e.preventDefault(); setRecipient(""); setAmount(); document.querySelector("dialog#pay").close(); }}>
+                        <span className="material-symbols-outlined">close</span>
+                    </button>
+                    {recipient !== "" && !recipientData && recipient !== "bank" && loadingData && <>
+                        <Modal_Part_Loading />
+                    </>}
+                    {(recipientData || recipient === "bank") && <>
+                        <span className="title">And How Much?</span>
+                        <button className="recipient" onClick={(e) => { e.preventDefault(); setRecipient(""); setAmount() }}>
+                            {recipient !== "bank" && <>
+                                <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
+                                <div className="about">
+                                    <span className="name">{recipientData.about.firstname} {recipientData.about.lastname}</span>
+                                    <span className="display">{recipientData.about.displayname}</span>
+                                    <span className="hover">Change</span>
+                                    <span className="icon-hover">Change</span>
+                                </div>
+                            </>}
+                            {recipient === "bank" && <>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    xmlSpace="preserve"
+                                    viewBox="0 0 512 512"
+                                    className="bank"
+                                >
+                                    <g>
+                                        <path d="m451.5 132.5-97.8-43-97.7-43-97.7 43-97.8 43v50h391zM99 365.5a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21H99a10.5 10.5 0 1 0 0 21h3.5v150H99zm126 0a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21h-62a10.5 10.5 0 1 0 0 21h3.5v150H225zm128 0a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21h-62a10.5 10.5 0 1 0 0 21h3.5v150H353zm-292.5 43v6a10 10 0 0 0 10 10h371a10 10 0 0 0 10-10v-6a10 10 0 0 0-10-10h-371a10 10 0 0 0-10 10zm407 28h-423a10 10 0 0 0-10 10v9a10 10 0 0 0 10 10h423a10 10 0 0 0 10-10v-9a10 10 0 0 0-10-10z" />
+                                    </g>
+                                </svg>
+                                <span className="bank">Bank</span>
                                 <span className="hover">Change</span>
                                 <span className="icon-hover">Change</span>
-                            </div>
-                        </>}
-                        {recipient === "bank" && <>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                xmlSpace="preserve"
-                                viewBox="0 0 512 512"
-                                className="bank"
-                            >
-                                <g>
-                                    <path d="m451.5 132.5-97.8-43-97.7-43-97.7 43-97.8 43v50h391zM99 365.5a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21H99a10.5 10.5 0 1 0 0 21h3.5v150H99zm126 0a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21h-62a10.5 10.5 0 1 0 0 21h3.5v150H225zm128 0a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21h-62a10.5 10.5 0 1 0 0 21h3.5v150H353zm-292.5 43v6a10 10 0 0 0 10 10h371a10 10 0 0 0 10-10v-6a10 10 0 0 0-10-10h-371a10 10 0 0 0-10 10zm407 28h-423a10 10 0 0 0-10 10v9a10 10 0 0 0 10 10h423a10 10 0 0 0 10-10v-9a10 10 0 0 0-10-10z" />
-                                </g>
-                            </svg>
-                            <span className="bank">Bank</span>
-                            <span className="hover">Change</span>
-                            <span className="icon-hover">Change</span>
-                        </>}
-                    </button>
-                    <input type="number" step={1} onChange={handleAmountChange} value={amount} required min={1} max={props.userData[props.currentUser.uid].money} placeholder="100" />
-                    <button type="submit" disabled={loading}>Pay!</button>
-                </>}
-                {recipient === "" && props.ids && <>
-                    <span className="title">Who Are You Paying?</span>
-                    <ul className="userList">
-                        <button onClick={() => setRecipient("bank")} type="bank">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                xmlSpace="preserve"
-                                viewBox="0 0 512 512"
-                                className="bank"
-                            >
-                                <g>
-                                    <path d="m451.5 132.5-97.8-43-97.7-43-97.7 43-97.8 43v50h391zM99 365.5a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21H99a10.5 10.5 0 1 0 0 21h3.5v150H99zm126 0a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21h-62a10.5 10.5 0 1 0 0 21h3.5v150H225zm128 0a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21h-62a10.5 10.5 0 1 0 0 21h3.5v150H353zm-292.5 43v6a10 10 0 0 0 10 10h371a10 10 0 0 0 10-10v-6a10 10 0 0 0-10-10h-371a10 10 0 0 0-10 10zm407 28h-423a10 10 0 0 0-10 10v9a10 10 0 0 0 10 10h423a10 10 0 0 0 10-10v-9a10 10 0 0 0-10-10z" />
-                                </g>
-                            </svg>
-                            <span>Bank</span>
+                            </>}
                         </button>
-                        {props.ids.sort((a, b) => a.localeCompare(b)).map((player, index) => {
-                            if (player === props.currentUser.uid) return <Fragment key={index} />
-                            return <button key={index} onClick={() => setRecipient(player)} type="select">
-                                <Modal_Part_Player id={player} />
+                        <input type="number" step={1} onChange={handleAmountChange} value={amount} required min={1} max={props.userData[props.currentUser.uid].money} placeholder="100" />
+                        <button type="submit" disabled={loading}>Pay!</button>
+                    </>}
+                    {recipient === "" && props.ids && <>
+                        <span className="title">Who Are You Paying?</span>
+                        <ul className="userList">
+                            <button onClick={() => setRecipient("bank")} type="bank">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    xmlSpace="preserve"
+                                    viewBox="0 0 512 512"
+                                    className="bank"
+                                >
+                                    <g>
+                                        <path d="m451.5 132.5-97.8-43-97.7-43-97.7 43-97.8 43v50h391zM99 365.5a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21H99a10.5 10.5 0 1 0 0 21h3.5v150H99zm126 0a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21h-62a10.5 10.5 0 1 0 0 21h3.5v150H225zm128 0a10.5 10.5 0 1 0 0 21h62a10.5 10.5 0 1 0 0-21h-3.5v-150h3.5a10.5 10.5 0 1 0 0-21h-62a10.5 10.5 0 1 0 0 21h3.5v150H353zm-292.5 43v6a10 10 0 0 0 10 10h371a10 10 0 0 0 10-10v-6a10 10 0 0 0-10-10h-371a10 10 0 0 0-10 10zm407 28h-423a10 10 0 0 0-10 10v9a10 10 0 0 0 10 10h423a10 10 0 0 0 10-10v-9a10 10 0 0 0-10-10z" />
+                                    </g>
+                                </svg>
+                                <span>Bank</span>
                             </button>
-                        })}
-                    </ul>
-                </>}
-            </form>
-        </div>
-        <div className="modal-overlay" id="for-pay" onClick={(e) => { e.preventDefault(); setRecipient(""); setAmount(); document.body.classList.remove("modal-pay-visible") }} />
+                            {props.ids.sort((a, b) => a.localeCompare(b)).map((player, index) => {
+                                if (player === props.currentUser.uid) return <Fragment key={index} />
+                                return <button key={index} onClick={() => setRecipient(player)} type="select">
+                                    <Modal_Part_Player id={player} />
+                                </button>
+                            })}
+                        </ul>
+                    </>}
+                </form>
+            </div>
+        </dialog>
     </>
 }
 
@@ -1132,86 +1136,87 @@ function Modal_Trade(props) {
         setFromReceivingUserAmount(0)
         setFromPayingUserProperties([])
         setFromReceivingUserProperties([])
-        document.body.classList.remove("modal-trade-visible")
+        document.querySelector("dialog#trade").close();
     }
 
     return <>
-        <div className="modal" id="trade">
-            <form className="container" onSubmit={handleSubmit}>
-                <button type="cancel" onClick={handleClose}>
-                    <span className="material-symbols-outlined">close</span>
-                </button>
-                {recipient !== "" && !recipientData && loadingData && <>
-                    <Modal_Part_Loading />
-                </>}
-                {recipientData && currentUserData && recipient && <>
-                    <span className="title">And what are you trading?</span>
-                    <div className="side-by-side">
-                        <div className="paying-user">
-                            <div className="recipient">
-                                <img src={currentUserData.images.photoURL} alt="" className="profilePicture" />
-                                <div className="about">
-                                    <span className="name">{currentUserData.about.firstname} {currentUserData.about.lastname}</span>
-                                    <span className="display">{currentUserData.about.displayname}</span>
+        <dialog className="modal" id="trade">
+            <div className="container">
+                <form className="content" onSubmit={handleSubmit}>
+                    <button type="cancel" onClick={handleClose}>
+                        <span className="material-symbols-outlined">close</span>
+                    </button>
+                    {recipient !== "" && !recipientData && loadingData && <>
+                        <Modal_Part_Loading />
+                    </>}
+                    {recipientData && currentUserData && recipient && <>
+                        <span className="title">And what are you trading?</span>
+                        <div className="side-by-side">
+                            <div className="paying-user">
+                                <div className="recipient">
+                                    <img src={currentUserData.images.photoURL} alt="" className="profilePicture" />
+                                    <div className="about">
+                                        <span className="name">{currentUserData.about.firstname} {currentUserData.about.lastname}</span>
+                                        <span className="display">{currentUserData.about.displayname}</span>
+                                    </div>
                                 </div>
+                                <input type="number" step={1} onChange={(e) => { setFromPayingUserAmount(e.target.value) }} value={fromPayingUserAmount} required min={0} max={props.userData[props.currentUser.uid].money} placeholder="100" />
+                                <ul className="properties">
+                                    {props.userData[props.currentUser.uid].properties && props.userData[props.currentUser.uid].properties.sort((a, b) => a - b).map((item, index) => {
+                                        return <button key={index} type="select" onClick={(e) => { e.preventDefault(); handlePropertyAdd(item, "paying") }} id={"paying-property-" + item} style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }}>
+                                            <span className="title">
+                                                {properties[item].isStation && <>Station</>}
+                                                {properties[item].isUtility && <>Utility</>}
+                                                {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
+                                                <> £{properties[item].price}</>
+                                            </span>
+                                            <span className="name">{properties[item].name}</span>
+                                        </button>
+                                    })}
+                                </ul>
                             </div>
-                            <input type="number" step={1} onChange={(e) => { setFromPayingUserAmount(e.target.value) }} value={fromPayingUserAmount} required min={0} max={props.userData[props.currentUser.uid].money} placeholder="100" />
-                            <ul className="properties">
-                                {props.userData[props.currentUser.uid].properties && props.userData[props.currentUser.uid].properties.sort((a, b) => a - b).map((item, index) => {
-                                    return <button key={index} type="select" onClick={(e) => { e.preventDefault(); handlePropertyAdd(item, "paying") }} id={"paying-property-" + item} style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }}>
-                                        <span className="title">
-                                            {properties[item].isStation && <>Station</>}
-                                            {properties[item].isUtility && <>Utility</>}
-                                            {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
-                                            <> £{properties[item].price}</>
-                                        </span>
-                                        <span className="name">{properties[item].name}</span>
-                                    </button>
-                                })}
-                            </ul>
+                            <div className="receiving-user">
+                                <button className="recipient" onClick={(e) => { e.preventDefault(); setRecipient(""); setAmount() }}>
+                                    <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
+                                    <div className="about">
+                                        <span className="name">{recipientData.about.firstname} {recipientData.about.lastname}</span>
+                                        <span className="display">{recipientData.about.displayname}</span>
+                                        <span className="hover">Change</span>
+                                        <span className="icon-hover">Change</span>
+                                    </div>
+                                </button>
+                                <input type="number" step={1} onChange={(e) => { setFromReceivingUserAmount(e.target.value) }} value={fromReceivingUserAmount} required min={0} max={props.userData[recipient].money} placeholder="100" />
+                                <ul className="properties">
+                                    {props.userData[recipient].properties && props.userData[recipient].properties.sort((a, b) => a - b).map((item, index) => {
+                                        return <button key={index} type="select" onClick={(e) => { e.preventDefault(); handlePropertyAdd(item, "receiving") }} id={"receiving-property-" + item} style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }}>
+                                            <span className="title">
+                                                {properties[item].isStation && <>Station</>}
+                                                {properties[item].isUtility && <>Utility</>}
+                                                {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
+                                                <> £{properties[item].price}</>
+                                            </span>
+                                            <span className="name">{properties[item].name}</span>
+                                        </button>
+                                    })}
+                                </ul>
+                            </div>
                         </div>
-                        <div className="receiving-user">
-                            <button className="recipient" onClick={(e) => { e.preventDefault(); setRecipient(""); setAmount() }}>
-                                <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
-                                <div className="about">
-                                    <span className="name">{recipientData.about.firstname} {recipientData.about.lastname}</span>
-                                    <span className="display">{recipientData.about.displayname}</span>
-                                    <span className="hover">Change</span>
-                                    <span className="icon-hover">Change</span>
-                                </div>
-                            </button>
-                            <input type="number" step={1} onChange={(e) => { setFromReceivingUserAmount(e.target.value) }} value={fromReceivingUserAmount} required min={0} max={props.userData[recipient].money} placeholder="100" />
-                            <ul className="properties">
-                                {props.userData[recipient].properties && props.userData[recipient].properties.sort((a, b) => a - b).map((item, index) => {
-                                    return <button key={index} type="select" onClick={(e) => { e.preventDefault(); handlePropertyAdd(item, "receiving") }} id={"receiving-property-" + item} style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }}>
-                                        <span className="title">
-                                            {properties[item].isStation && <>Station</>}
-                                            {properties[item].isUtility && <>Utility</>}
-                                            {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
-                                            <> £{properties[item].price}</>
-                                        </span>
-                                        <span className="name">{properties[item].name}</span>
-                                    </button>
-                                })}
-                            </ul>
-                        </div>
-                    </div>
-                    <button type="submit" disabled={loading}>Purpose Trade!</button>
-                </>}
-                {recipient === "" && props.ids && <>
-                    <span className="title">Who are you trading with?</span>
-                    <ul className="userList">
-                        {props.ids.sort((a, b) => a.localeCompare(b)).map((player, index) => {
-                            if (player === props.currentUser.uid) return <Fragment key={index} />
-                            return <button key={index} onClick={(e) => { e.preventDefault(); setRecipient(player) }} type="select">
-                                <Modal_Part_Player id={player} />
-                            </button>
-                        })}
-                    </ul>
-                </>}
-            </form>
-        </div >
-        <div className="modal-overlay" id="for-trade" onClick={handleClose} />
+                        <button type="submit" disabled={loading}>Purpose Trade!</button>
+                    </>}
+                    {recipient === "" && props.ids && <>
+                        <span className="title">Who are you trading with?</span>
+                        <ul className="userList">
+                            {props.ids.sort((a, b) => a.localeCompare(b)).map((player, index) => {
+                                if (player === props.currentUser.uid) return <Fragment key={index} />
+                                return <button key={index} onClick={(e) => { e.preventDefault(); setRecipient(player) }} type="select">
+                                    <Modal_Part_Player id={player} />
+                                </button>
+                            })}
+                        </ul>
+                    </>}
+                </form>
+            </div>
+        </dialog >
     </>
 }
 
@@ -1225,8 +1230,15 @@ function Modal_Trade_Purposed(props) {
     useEffect(() => {
         console.log(props.purposedTrades, props.purposedTrades[0])
         setTrade(props.purposedTrades[0])
+        document.querySelector("dialog#trade-request").showModal()
 
-        return () => { setTrade() }
+        return () => { 
+            setTrade()
+            
+            if (document.querySelector("dialog#trade-request")) {
+                document.querySelector("dialog#trade-request").close()
+            }
+        }
     }, [props.purposedTrades])
 
     useEffect(() => {
@@ -1330,70 +1342,71 @@ function Modal_Trade_Purposed(props) {
     }
 
     return <>
-        <div className="modal" id="trade-request" >
-            <form className="container">
-                <button type="cancel" onClick={handleDecline} tabIndex={2}>
-                    <span className="material-symbols-outlined">close</span>
-                </button>
-                {!recipientData && loadingData && <>
-                    <Modal_Part_Loading />
-                </>}
-                {recipientData && payingUserData && <>
-                    <span className="title">Trade Request</span>
-                    <div className="side-by-side">
-                        <div className="paying-user">
-                            <div className="recipient">
-                                <img src={payingUserData.images.photoURL} alt="" className="profilePicture" />
-                                <div className="about">
-                                    <span className="name">{payingUserData.about.firstname} {payingUserData.about.lastname}</span>
-                                    <span className="display">{payingUserData.about.displayname}</span>
-                                </div>
-                            </div>
-                            <input type="number" readOnly value={trade.trade.paying.amount} tabIndex={-1} />
-                            <ul className="properties">
-                                {trade.trade.paying.properties && trade.trade.paying.properties.sort((a, b) => a - b).map((item, index) => {
-                                    return <div key={index} className="item" id={"paying-property-" + item} style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }}>
-                                        <span className="title">
-                                            {properties[item].isStation && <>Station</>}
-                                            {properties[item].isUtility && <>Utility</>}
-                                            {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
-                                        </span>
-                                        <span className="name">{properties[item].name}</span>
+        <dialog className="modal" id="trade-request" >
+            <div className="container">
+                <form className="content">
+                    <button type="cancel" onClick={handleDecline} tabIndex={2}>
+                        <span className="material-symbols-outlined">close</span>
+                    </button>
+                    {!recipientData && loadingData && <>
+                        <Modal_Part_Loading />
+                    </>}
+                    {recipientData && payingUserData && <>
+                        <span className="title">Trade Request</span>
+                        <div className="side-by-side">
+                            <div className="paying-user">
+                                <div className="recipient">
+                                    <img src={payingUserData.images.photoURL} alt="" className="profilePicture" />
+                                    <div className="about">
+                                        <span className="name">{payingUserData.about.firstname} {payingUserData.about.lastname}</span>
+                                        <span className="display">{payingUserData.about.displayname}</span>
                                     </div>
-                                })}
-                            </ul>
-                        </div>
-                        <div className="receiving-user">
-                            <div className="recipient">
-                                <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
-                                <div className="about">
-                                    <span className="name">{recipientData.about.firstname} {recipientData.about.lastname}</span>
-                                    <span className="display">{recipientData.about.displayname}</span>
                                 </div>
+                                <input type="number" readOnly value={trade.trade.paying.amount} tabIndex={-1} />
+                                <ul className="properties">
+                                    {trade.trade.paying.properties && trade.trade.paying.properties.sort((a, b) => a - b).map((item, index) => {
+                                        return <div key={index} className="item" id={"paying-property-" + item} style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }}>
+                                            <span className="title">
+                                                {properties[item].isStation && <>Station</>}
+                                                {properties[item].isUtility && <>Utility</>}
+                                                {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
+                                            </span>
+                                            <span className="name">{properties[item].name}</span>
+                                        </div>
+                                    })}
+                                </ul>
                             </div>
-                            <input type="number" readOnly value={trade.trade.receiving.amount} tabIndex={-1} />
-                            <ul className="properties">
-                                {trade.trade.receiving.properties && trade.trade.receiving.properties.sort((a, b) => a - b).map((item, index) => {
-                                    return <div key={index} className="item" id={"receiving-property-" + item} style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }}>
-                                        <span className="title">
-                                            {properties[item].isStation && <>Station</>}
-                                            {properties[item].isUtility && <>Utility</>}
-                                            {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
-                                        </span>
-                                        <span className="name">{properties[item].name}</span>
+                            <div className="receiving-user">
+                                <div className="recipient">
+                                    <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
+                                    <div className="about">
+                                        <span className="name">{recipientData.about.firstname} {recipientData.about.lastname}</span>
+                                        <span className="display">{recipientData.about.displayname}</span>
                                     </div>
-                                })}
-                            </ul>
+                                </div>
+                                <input type="number" readOnly value={trade.trade.receiving.amount} tabIndex={-1} />
+                                <ul className="properties">
+                                    {trade.trade.receiving.properties && trade.trade.receiving.properties.sort((a, b) => a - b).map((item, index) => {
+                                        return <div key={index} className="item" id={"receiving-property-" + item} style={{ "--background-color": properties[item].color, "--foreground-color": properties[item].colorText }}>
+                                            <span className="title">
+                                                {properties[item].isStation && <>Station</>}
+                                                {properties[item].isUtility && <>Utility</>}
+                                                {!properties[item].isUtility && !properties[item].isStation && <>Title Deed</>}
+                                            </span>
+                                            <span className="name">{properties[item].name}</span>
+                                        </div>
+                                    })}
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    <div className="side-by-side">
-                        <button type="decline" disabled={loading} tabIndex={1} onClick={handleDecline}>Decline</button>
-                        <button type="accept" disabled={loading} tabIndex={1} onClick={handleAccept}>Accept</button>
-                    </div>
-                </>}
-            </form>
-        </div>
-        <div className="modal-overlay" id="for-trade-request" onClick={handleDecline} />
+                        <div className="side-by-side">
+                            <button type="decline" disabled={loading} tabIndex={1} onClick={handleDecline}>Decline</button>
+                            <button type="accept" disabled={loading} tabIndex={1} onClick={handleAccept}>Accept</button>
+                        </div>
+                    </>}
+                </form>
+            </div>
+        </dialog>
     </>
 }
 
@@ -1404,8 +1417,14 @@ function Modal_Sale_Purposed(props) {
     useEffect(() => {
         console.log(props.purposedSales, props.purposedSales[0])
         setSale(props.purposedSales[0])
+        document.querySelector("dialog#sale-request").showModal()
 
-        return () => { setSale() }
+        return () => {
+            setSale()
+            if (document.querySelector("dialog#sale-request")) {
+                document.querySelector("dialog#sale-request").close()
+            }
+        }
     }, [props.purposedSales])
 
     const handleAccept = (e) => {
@@ -1464,37 +1483,34 @@ function Modal_Sale_Purposed(props) {
         if (e) {
             e.preventDefault();
         }
-        console.log(props.purposedSales)
-        if (props.purposedSales[0] === undefined) {
-            document.body.classList.remove("modal-sale-request-visible")
-        }
     }
 
     return <>
-        <div className="modal" id="sale-request" >
-            <form className="container">
-                <button type="cancel" onClick={handleDecline} tabIndex={2}>
-                    <span className="material-symbols-outlined">close</span>
-                </button>
-                {sale && <>
-                    <span className="title">Buy Property?</span>
-                    {sale.sale.property && <div className="selected-property" style={{ "--background-color": properties[sale.sale.property].color, "--foreground-color": properties[sale.sale.property].colorText }}>
-                        <span className="title">
-                            {properties[sale.sale.property].isStation && <>Station</>}
-                            {properties[sale.sale.property].isUtility && <>Utility</>}
-                            {!properties[sale.sale.property].isUtility && !properties[sale.sale.property].isStation && <>Title Deed</>}
-                        </span>
-                        <span className="name">{properties[sale.sale.property].name}</span>
-                    </div>}
-                    <input type="number" readOnly value={sale.sale.amount} tabIndex={-1} />
-                    <div className="side-by-side">
-                        <button type="decline" disabled={loading} tabIndex={1} onClick={handleDecline}>Decline</button>
-                        <button type="accept" disabled={loading} tabIndex={1} onClick={handleAccept}>Accept</button>
-                    </div>
-                </>}
-            </form>
-        </div>
-        <div className="modal-overlay" id="for-sale-request" onClick={handleDecline} />
+        <dialog className="modal" id="sale-request" >
+            <div className="container">
+                <form className="content">
+                    <button type="cancel" onClick={handleDecline} tabIndex={2}>
+                        <span className="material-symbols-outlined">close</span>
+                    </button>
+                    {sale && <>
+                        <span className="title">Buy Property?</span>
+                        {sale.sale.property && <div className="selected-property" style={{ "--background-color": properties[sale.sale.property].color, "--foreground-color": properties[sale.sale.property].colorText }}>
+                            <span className="title">
+                                {properties[sale.sale.property].isStation && <>Station</>}
+                                {properties[sale.sale.property].isUtility && <>Utility</>}
+                                {!properties[sale.sale.property].isUtility && !properties[sale.sale.property].isStation && <>Title Deed</>}
+                            </span>
+                            <span className="name">{properties[sale.sale.property].name}</span>
+                        </div>}
+                        <input type="number" readOnly value={sale.sale.amount} tabIndex={-1} />
+                        <div className="side-by-side">
+                            <button type="decline" disabled={loading} tabIndex={1} onClick={handleDecline}>Decline</button>
+                            <button type="accept" disabled={loading} tabIndex={1} onClick={handleAccept}>Accept</button>
+                        </div>
+                    </>}
+                </form>
+            </div>
+        </dialog>
     </>
 }
 
@@ -1534,13 +1550,13 @@ function Modal_Mortgage(props) {
             e.preventDefault();
         }
         setProperty();
-        document.body.classList.remove("modal-mortgage-visible")
+        document.querySelector("dialog#mortgage").close();
     }
 
     return <>
-        <div className="modal" id="mortgage">
+        <dialog className="modal" id="mortgage">
             <div className="container">
-                <form onSubmit={handleSubmit}>
+                <form className="content" onSubmit={handleSubmit}>
                     <button type="cancel" onClick={handleClose}>
                         <span className="material-symbols-outlined">close</span>
                     </button>
@@ -1608,8 +1624,7 @@ function Modal_Mortgage(props) {
                     </>}
                 </form>
             </div>
-        </div>
-        <div className="modal-overlay" id="for-mortgage" onClick={handleClose} />
+        </dialog>
     </>
 }
 
@@ -1650,13 +1665,13 @@ function Modal_Unmortgage(props) {
         }
         setProperty();
         setState(0)
-        document.body.classList.remove("modal-unmortgage-visible")
+        document.querySelector("dialog#unmortgage").close();
     }
 
     return <>
-        <div className="modal" id="unmortgage">
+        <dialog className="modal" id="unmortgage">
             <div className="container">
-                <form onSubmit={handleSubmit}>
+                <form className="content" onSubmit={handleSubmit}>
                     <button type="cancel" onClick={handleClose}>
                         <span className="material-symbols-outlined">close</span>
                     </button>
@@ -1724,8 +1739,7 @@ function Modal_Unmortgage(props) {
                     </>}
                 </form>
             </div>
-        </div>
-        <div className="modal-overlay" id="for-unmortgage" onClick={handleClose} />
+        </dialog>
     </>
 }
 
@@ -1785,40 +1799,41 @@ function Modal_Gamemaster_GoPass(props) {
 
     return <>
         {props.currentUser.uid === props.gameInfo.gameMaster && <>
-            <div className="modal" id="goPass">
-                <form className="container" onSubmit={handleSubmit}>
-                    <button type="cancel" onClick={(e) => { e.preventDefault(); setRecipient(""); document.body.classList.remove("modal-goPass-visible") }}>
-                        <span className="material-symbols-outlined">close</span>
-                    </button>
-                    {recipient !== "" && !recipientData && loadingData && <>
-                        <Modal_Part_Loading />
-                    </>}
-                    {recipientData && <>
-                        <span className="title">Confirm?</span>
-                        <button className="recipient" onClick={(e) => { e.preventDefault(); setRecipient("") }}>
-                            <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
-                            <div className="about">
-                                <span className="name">{recipientData.about.firstname} {recipientData.about.lastname}</span>
-                                <span className="display">{recipientData.about.displayname}</span>
-                                <span className="hover">Change</span>
-                                <span className="icon-hover">Change</span>
-                            </div>
+            <dialog className="modal" id="goPass">
+                <div className="container">
+                    <form className="content" onSubmit={handleSubmit}>
+                        <button type="cancel" onClick={(e) => { e.preventDefault(); setRecipient(""); document.querySelector("dialog#goPass").close(); }}>
+                            <span className="material-symbols-outlined">close</span>
                         </button>
-                        <button type="submit" disabled={loading}>Pay!</button>
-                    </>}
-                    {recipient === "" && props.ids && <>
-                        <span className="title">Who has passed go?</span>
-                        <ul className="userList">
-                            {props.ids.sort((a, b) => a.localeCompare(b)).map((player, index) => {
-                                return <button key={index} onClick={() => setRecipient(player)} type="select">
-                                    <Modal_Part_Player id={player} />
-                                </button>
-                            })}
-                        </ul>
-                    </>}
-                </form>
-            </div>
-            <div className="modal-overlay" id="for-goPass" onClick={(e) => { e.preventDefault(); setRecipient(""); document.body.classList.remove("modal-goPass-visible") }} />
+                        {recipient !== "" && !recipientData && loadingData && <>
+                            <Modal_Part_Loading />
+                        </>}
+                        {recipientData && <>
+                            <span className="title">Confirm?</span>
+                            <button className="recipient" onClick={(e) => { e.preventDefault(); setRecipient("") }}>
+                                <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
+                                <div className="about">
+                                    <span className="name">{recipientData.about.firstname} {recipientData.about.lastname}</span>
+                                    <span className="display">{recipientData.about.displayname}</span>
+                                    <span className="hover">Change</span>
+                                    <span className="icon-hover">Change</span>
+                                </div>
+                            </button>
+                            <button type="submit" disabled={loading}>Pay!</button>
+                        </>}
+                        {recipient === "" && props.ids && <>
+                            <span className="title">Who has passed go?</span>
+                            <ul className="userList">
+                                {props.ids.sort((a, b) => a.localeCompare(b)).map((player, index) => {
+                                    return <button key={index} onClick={() => setRecipient(player)} type="select">
+                                        <Modal_Part_Player id={player} />
+                                    </button>
+                                })}
+                            </ul>
+                        </>}
+                    </form>
+                </div>
+            </dialog>
         </>}
     </>
 }
@@ -1899,56 +1914,73 @@ function Modal_Gamemaster_PropertySell(props) {
         setState(0);
         setAmount()
 
-        document.body.classList.remove("modal-property-sell-visible")
+        document.querySelector("dialog#property-sell").close();
         return
     }
 
     return <>
         {props.currentUser.uid === props.gameInfo.gameMaster && <>
-            <div className="modal" id="property-sell">
-                <form className="container" onSubmit={handleSubmit}>
-                    <button type="cancel" tabIndex={2} onClick={handleClose}>
-                        <span className="material-symbols-outlined">close</span>
-                    </button>
-                    {recipient !== "" && !recipientData && loadingData && <>
-                        <Modal_Part_Loading />
-                    </>}
-                    {recipientData && property && state === 1 && <>
-                        <span className="title">Confirm?</span>
-                        <button className="recipient" onClick={(e) => { e.preventDefault(); setRecipient("") }}>
-                            <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
-                            <div className="about">
-                                <span className="name">{recipientData.about.firstname} {recipientData.about.lastname}</span>
-                                <span className="display">{recipientData.about.displayname}</span>
+            <dialog className="modal" id="property-sell">
+                <div className="container">
+                    <form className="content" onSubmit={handleSubmit}>
+                        <button type="cancel" tabIndex={2} onClick={handleClose}>
+                            <span className="material-symbols-outlined">close</span>
+                        </button>
+                        {recipient !== "" && !recipientData && loadingData && <>
+                            <Modal_Part_Loading />
+                        </>}
+                        {recipientData && property && state === 1 && <>
+                            <span className="title">Confirm?</span>
+                            <button className="recipient" onClick={(e) => { e.preventDefault(); setRecipient("") }}>
+                                <img src={recipientData.images.photoURL} alt="" className="profilePicture" />
+                                <div className="about">
+                                    <span className="name">{recipientData.about.firstname} {recipientData.about.lastname}</span>
+                                    <span className="display">{recipientData.about.displayname}</span>
+                                    <span className="hover">Change</span>
+                                    <span className="icon-hover">Change</span>
+                                </div>
+                            </button>
+                            <button className="selected-property" id={"property-" + property} style={{ "--background-color": properties[property].color, "--foreground-color": properties[property].colorText }} onClick={(e) => {
+                                e.preventDefault();
+                                setState(0)
+                            }}>
+                                <span className="title">
+                                    {properties[property].isStation && <>Station</>}
+                                    {properties[property].isUtility && <>Utility</>}
+                                    {!properties[property].isUtility && !properties[property].isStation && <>Title Deed</>}
+                                </span>
+                                <span className="name">{properties[property].name}</span>
                                 <span className="hover">Change</span>
                                 <span className="icon-hover">Change</span>
-                            </div>
-                        </button>
-                        <button className="selected-property" id={"property-" + property} style={{ "--background-color": properties[property].color, "--foreground-color": properties[property].colorText }} onClick={(e) => {
-                            e.preventDefault();
-                            setState(0)
-                        }}>
-                            <span className="title">
-                                {properties[property].isStation && <>Station</>}
-                                {properties[property].isUtility && <>Utility</>}
-                                {!properties[property].isUtility && !properties[property].isStation && <>Title Deed</>}
-                            </span>
-                            <span className="name">{properties[property].name}</span>
-                            <span className="hover">Change</span>
-                            <span className="icon-hover">Change</span>
-                        </button>
-                        <input type="number" step={1} onChange={(e) => { e.preventDefault(); setAmount(e.target.value) }} value={amount} required min={1} max={props.userData[props.currentUser.uid].money} placeholder="100" />
-                        <button type="submit" disabled={loading}>Sell</button>
-                    </>}
-                    {recipientData && state === 0 && <>
-                        <span className="title">Which property?</span>
-                        <ul className="properties">
-                            {properties && properties.sort((a, b) => a - b).map((item, index) => {
-                                if (props.gameData.properties.includes(index)) {
-                                    return <Fragment key={index} />
-                                }
-                                if (index === property) {
-                                    return <button key={index} className="item selected" id={"property-" + index} style={{ "--background-color": item.color, "--foreground-color": item.colorText }} onClick={async (e) => {
+                            </button>
+                            <input type="number" step={1} onChange={(e) => { e.preventDefault(); setAmount(e.target.value) }} value={amount} required min={1} max={props.userData[props.currentUser.uid].money} placeholder="100" />
+                            <button type="submit" disabled={loading}>Sell</button>
+                        </>}
+                        {recipientData && state === 0 && <>
+                            <span className="title">Which property?</span>
+                            <ul className="properties">
+                                {properties && properties.sort((a, b) => a - b).map((item, index) => {
+                                    if (props.gameData.properties.includes(index)) {
+                                        return <Fragment key={index} />
+                                    }
+                                    if (index === property) {
+                                        return <button key={index} className="item selected" id={"property-" + index} style={{ "--background-color": item.color, "--foreground-color": item.colorText }} onClick={async (e) => {
+                                            e.preventDefault();
+                                            if (property) {
+                                                document.querySelector("#property-" + property).classList.remove("selected");
+                                            }
+                                            setProperty(index);
+                                            document.querySelector("#property-" + index).classList.add("selected")
+                                        }}>
+                                            <span className="title">
+                                                {item.isStation && <>Station</>}
+                                                {item.isUtility && <>Utility</>}
+                                                {!item.isUtility && !item.isStation && <>Title Deed</>}
+                                            </span>
+                                            <span className="name">{item.name}</span>
+                                        </button>
+                                    }
+                                    return <button key={index} className="item" id={"property-" + index} style={{ "--background-color": item.color, "--foreground-color": item.colorText }} onClick={async (e) => {
                                         e.preventDefault();
                                         if (property) {
                                             document.querySelector("#property-" + property).classList.remove("selected");
@@ -1963,40 +1995,23 @@ function Modal_Gamemaster_PropertySell(props) {
                                         </span>
                                         <span className="name">{item.name}</span>
                                     </button>
-                                }
-
-                                return <button key={index} className="item" id={"property-" + index} style={{ "--background-color": item.color, "--foreground-color": item.colorText }} onClick={async (e) => {
-                                    e.preventDefault();
-                                    if (property) {
-                                        document.querySelector("#property-" + property).classList.remove("selected");
-                                    }
-                                    setProperty(index);
-                                    document.querySelector("#property-" + index).classList.add("selected")
-                                }}>
-                                    <span className="title">
-                                        {item.isStation && <>Station</>}
-                                        {item.isUtility && <>Utility</>}
-                                        {!item.isUtility && !item.isStation && <>Title Deed</>}
-                                    </span>
-                                    <span className="name">{item.name}</span>
-                                </button>
-                            })}
-                        </ul>
-                        <button type="continue" disabled={!property} onClick={(e) => { e.preventDefault(); setState(1) }}>Continue</button>
-                    </>}
-                    {recipient === "" && props.ids && <>
-                        <span className="title">Who's buying the property?</span>
-                        <ul className="userList">
-                            {props.ids.sort((a, b) => a.localeCompare(b)).map((player, index) => {
-                                return <button key={index} onClick={() => setRecipient(player)} type="select">
-                                    <Modal_Part_Player id={player} />
-                                </button>
-                            })}
-                        </ul>
-                    </>}
-                </form>
-            </div>
-            <div className="modal-overlay" id="for-property-sell" onClick={handleClose} />
+                                })}
+                            </ul>
+                            <button type="continue" disabled={!property} onClick={(e) => { e.preventDefault(); setState(1) }}>Continue</button>
+                        </>}
+                        {recipient === "" && props.ids && <>
+                            <span className="title">Who's buying the property?</span>
+                            <ul className="userList">
+                                {props.ids.sort((a, b) => a.localeCompare(b)).map((player, index) => {
+                                    return <button key={index} onClick={() => setRecipient(player)} type="select">
+                                        <Modal_Part_Player id={player} />
+                                    </button>
+                                })}
+                            </ul>
+                        </>}
+                    </form>
+                </div>
+            </dialog>
         </>}
     </>
 }
@@ -2005,9 +2020,11 @@ function Modal_QR(props) {
     const params = useParams();
 
     return <>
-        <div className="modal" id="qr">
+        <dialog className="modal" id="qr">
             <div className="container">
-                <button type="cancel" onClick={(e) => { e.preventDefault(); document.body.classList.remove("modal-qr-visible") }}>
+                <button type="cancel" onClick={(e) => {
+                    e.preventDefault(); document.querySelector("dialog#qr").close();
+                }}>
                     <span className="material-symbols-outlined">close</span>
                 </button>
                 <div className="side-by-side">
@@ -2052,8 +2069,7 @@ function Modal_QR(props) {
                     </div>
                 </div>
             </div>
-        </div>
-        <div className="modal-overlay" id="for-qr" onClick={(e) => { e.preventDefault(); document.body.classList.remove("modal-qr-visible") }} />
+        </dialog>
     </>
 }
 

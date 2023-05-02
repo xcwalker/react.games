@@ -1,26 +1,11 @@
-body.modal-trade-request-visible {
-    overflow-y: hidden;
-}
-
-body.modal-trade-request-visible #monopoly div.modal#trade-request {
-    /* hiding */
-    display: flex;
-}
-
-body.modal-trade-request-visible #monopoly div.modal-overlay#for-trade-request {
-    /* hiding */
-    pointer-events: auto;
-    opacity: 1;
-}
-
-#monopoly div.modal#trade-request .side-by-side>div {
+#monopoly dialog.modal#trade-request .side-by-side>div {
     /* flex */
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-#monopoly div.modal#trade-request .properties {
+#monopoly dialog.modal#trade-request .properties {
     /* spacing */
     margin: 0;
     padding: 0;
@@ -31,7 +16,7 @@ body.modal-trade-request-visible #monopoly div.modal-overlay#for-trade-request {
     gap: 5px;
 }
 
-#monopoly div.modal#trade-request .properties .item {
+#monopoly dialog.modal#trade-request .properties .item {
     /* position */
     position: relative;
 
@@ -49,12 +34,12 @@ body.modal-trade-request-visible #monopoly div.modal-overlay#for-trade-request {
     border: none;
 }
 
-#monopoly div.modal#trade-request .properties .item.selected {
+#monopoly dialog.modal#trade-request .properties .item.selected {
     background-color: var(--form-color-selector);
     color: var(--foreground-color-100);
 }
 
-#monopoly div.modal#trade-request .properties .item span.title {
+#monopoly dialog.modal#trade-request .properties .item span.title {
     /* position */
     position: absolute;
     top: 10px;
@@ -76,7 +61,7 @@ body.modal-trade-request-visible #monopoly div.modal-overlay#for-trade-request {
     transition: left 0.125s ease-in-out, translate 0.125s ease-in-out;
 }
 
-#monopoly div.modal#trade-request .properties .item span.name {
+#monopoly dialog.modal#trade-request .properties .item span.name {
     /* position */
     position: absolute;
     bottom: 0;
@@ -107,7 +92,7 @@ body.modal-trade-request-visible #monopoly div.modal-overlay#for-trade-request {
 }
 
 /*** decline button ***/
-#monopoly div.modal form button[type="decline"] {
+#monopoly dialog.modal form button[type="decline"] {
     /* sizing */
     height: 40px;
 
@@ -133,19 +118,19 @@ body.modal-trade-request-visible #monopoly div.modal-overlay#for-trade-request {
     transition: var(--quick-transition-translate), var(--quick-transition-opacity);
 }
 
-#monopoly div.modal form button[type="decline"]:hover,
-#monopoly div.modal form button[type="decline"]:focus-visible {
+#monopoly dialog.modal form button[type="decline"]:hover,
+#monopoly dialog.modal form button[type="decline"]:focus-visible {
     color: var(--form-color-invalid);
     background-color: var(--foreground-color-200);
 }
 
-#monopoly div.modal form button[type="decline"]:focus-visible {
+#monopoly dialog.modal form button[type="decline"]:focus-visible {
     outline: 2px solid var(--form-color-invalid);
     outline-offset: 2px;
 }
 
 /*** accept button ***/
-#monopoly div.modal form button[type="accept"] {
+#monopoly dialog.modal form button[type="accept"] {
     /* sizing */
     height: 40px;
 
@@ -171,13 +156,13 @@ body.modal-trade-request-visible #monopoly div.modal-overlay#for-trade-request {
     transition: var(--quick-transition-translate), var(--quick-transition-opacity);
 }
 
-#monopoly div.modal form button[type="accept"]:hover,
-#monopoly div.modal form button[type="accept"]:focus-visible {
+#monopoly dialog.modal form button[type="accept"]:hover,
+#monopoly dialog.modal form button[type="accept"]:focus-visible {
     color: var(--form-color-valid);
     background-color: var(--foreground-color-200);
 }
 
-#monopoly div.modal form button[type="accept"]:focus-visible {
+#monopoly dialog.modal form button[type="accept"]:focus-visible {
     outline: 2px solid var(--form-color-valid);
     outline-offset: 2px;
 }
