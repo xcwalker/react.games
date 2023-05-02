@@ -2,30 +2,30 @@ body.modal-qr-visible {
     overflow-y: hidden;
 }
 
-body.modal-qr-visible #monopoly div.modal#qr {
+body.modal-qr-visible #monopoly dialog.modal#qr {
     /* hiding */
     display: flex;
 }
 
-body.modal-qr-visible #monopoly div.modal-overlay#for-qr {
+body.modal-qr-visible #monopoly dialog.modal-overlay#for-qr {
     /* hiding */
     pointer-events: auto;
     opacity: 1;
 }
 
 /*** container ***/
-#monopoly div.modal#qr .container {
+#monopoly dialog.modal#qr .container {
     padding: clamp(10px, 10vmax, 20px);
 }
 
 /*** side-by-side ***/
-#monopoly div.modal#qr .container .side-by-side {
+#monopoly dialog.modal#qr .container .side-by-side {
     /* grid */
     grid-template-columns: repeat(auto-fit, minmax(min(275px, 100%), 1fr));
     gap: 20px;
 }
 
-#monopoly div.modal#qr .container .side-by-side .side {
+#monopoly dialog.modal#qr .container .side-by-side .side {
     /* sizing */
     width: 100%;
 
@@ -38,8 +38,8 @@ body.modal-qr-visible #monopoly div.modal-overlay#for-qr {
 }
 
 /*** code & url ***/
-#monopoly div.modal#qr .container div.url,
-#monopoly div.modal#qr .container div.gamecode {
+#monopoly dialog.modal#qr .container div.url,
+#monopoly dialog.modal#qr .container div.gamecode {
     /* sizing */
     width: 100%;
     overflow-x: scroll;
@@ -50,7 +50,7 @@ body.modal-qr-visible #monopoly div.modal-overlay#for-qr {
     gap: 5px;
 }
 
-#monopoly div.modal#qr .container .overflow {
+#monopoly dialog.modal#qr .container .overflow {
     /* sizing */
     padding: 10px;
     max-width: 100%;
@@ -62,8 +62,8 @@ body.modal-qr-visible #monopoly div.modal-overlay#for-qr {
     border-radius: 10px;
 }
 
-#monopoly div.modal#qr .container span.url,
-#monopoly div.modal#qr .container span.code {
+#monopoly dialog.modal#qr .container span.url,
+#monopoly dialog.modal#qr .container span.code {
     /* sizing */
     margin-right: 10px;
 
@@ -71,7 +71,7 @@ body.modal-qr-visible #monopoly div.modal-overlay#for-qr {
     white-space: nowrap;
 }
 
-#monopoly div.modal#qr .container span.subTitle {
+#monopoly dialog.modal#qr .container span.subTitle {
     /* text */
     font-size: 14px;
     font-weight: 600;
@@ -79,7 +79,7 @@ body.modal-qr-visible #monopoly div.modal-overlay#for-qr {
 }
 
 /*** copy button ***/
-#monopoly div.modal .container button[type="copy"] {
+#monopoly dialog.modal .container button[type="copy"] {
     /* sizing */
     height: 40px;
 
@@ -105,13 +105,13 @@ body.modal-qr-visible #monopoly div.modal-overlay#for-qr {
     transition: var(--quick-transition-translate), var(--quick-transition-opacity);
 }
 
-#monopoly div.modal .container button[type="copy"]:hover,
-#monopoly div.modal .container button[type="copy"]:focus-visible {
+#monopoly dialog.modal .container button[type="copy"]:hover,
+#monopoly dialog.modal .container button[type="copy"]:focus-visible {
     color: var(--form-color-selector);
     background-color: var(--foreground-color-200);
 }
 
-#monopoly div.modal .container button[type="copy"]:focus-visible {
+#monopoly dialog.modal .container button[type="copy"]:focus-visible {
     outline: 2px solid var(--form-color-selector);
     outline-offset: 2px;
 }

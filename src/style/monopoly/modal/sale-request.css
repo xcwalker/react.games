@@ -2,19 +2,19 @@ body.modal-sale-request-visible {
     overflow-y: hidden;
 }
 
-body.modal-sale-request-visible #monopoly div.modal#sale-request {
+body.modal-sale-request-visible #monopoly dialog.modal#sale-request {
     /* hiding */
     display: flex;
 }
 
-body.modal-sale-request-visible #monopoly div.modal-overlay#for-sale-request {
+body.modal-sale-request-visible #monopoly dialog.modal-overlay#for-sale-request {
     /* hiding */
     pointer-events: auto;
     opacity: 1;
 }
 
 /*** selected property ***/
-#monopoly div.modal#sale-request .selected-property {
+#monopoly dialog.modal#sale-request .selected-property {
     /* position */
     position: relative;
 
@@ -33,7 +33,7 @@ body.modal-sale-request-visible #monopoly div.modal-overlay#for-sale-request {
     overflow: hidden;
 }
 
-#monopoly div.modal#sale-request .selected-property span.title {
+#monopoly dialog.modal#sale-request .selected-property span.title {
     /* position */
     position: absolute;
     top: 10px;
@@ -55,7 +55,7 @@ body.modal-sale-request-visible #monopoly div.modal-overlay#for-sale-request {
     transition: left 0.125s ease-in-out, translate 0.125s ease-in-out;
 }
 
-#monopoly div.modal#sale-request .selected-property span.name {
+#monopoly dialog.modal#sale-request .selected-property span.name {
     /* position */
     position: absolute;
     bottom: 0;

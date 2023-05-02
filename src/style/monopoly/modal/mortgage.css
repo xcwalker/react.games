@@ -2,19 +2,19 @@ body.modal-mortgage-visible {
     overflow-y: hidden;
 }
 
-body.modal-mortgage-visible #monopoly div.modal#mortgage {
+body.modal-mortgage-visible #monopoly dialog.modal#mortgage {
     /* hiding */
     display: flex;
 }
 
-body.modal-mortgage-visible #monopoly div.modal-overlay#for-mortgage {
+body.modal-mortgage-visible #monopoly dialog.modal-overlay#for-mortgage {
     /* hiding */
     pointer-events: auto;
     opacity: 1;
 }
 
 /*** properties ***/
-#monopoly div.modal#mortgage .properties {
+#monopoly dialog.modal#mortgage .properties {
     /* spacing */
     margin: 0;
     padding: 0;
@@ -25,8 +25,8 @@ body.modal-mortgage-visible #monopoly div.modal-overlay#for-mortgage {
     gap: 5px;
 }
 
-#monopoly div.modal#mortgage .selected-property,
-#monopoly div.modal#mortgage .properties .item {
+#monopoly dialog.modal#mortgage .selected-property,
+#monopoly dialog.modal#mortgage .properties .item {
     /* position */
     position: relative;
 
@@ -46,13 +46,13 @@ body.modal-mortgage-visible #monopoly div.modal-overlay#for-mortgage {
     overflow: hidden;
 }
 
-#monopoly div.modal#mortgage .properties .item.selected {
+#monopoly dialog.modal#mortgage .properties .item.selected {
     background-color: var(--form-color-selector);
     color: var(--foreground-color-100);
 }
 
-#monopoly div.modal#mortgage .selected-property span.title,
-#monopoly div.modal#mortgage .properties .item span.title {
+#monopoly dialog.modal#mortgage .selected-property span.title,
+#monopoly dialog.modal#mortgage .properties .item span.title {
     /* position */
     position: absolute;
     top: 10px;
@@ -74,8 +74,8 @@ body.modal-mortgage-visible #monopoly div.modal-overlay#for-mortgage {
     transition: left 0.125s ease-in-out, translate 0.125s ease-in-out;
 }
 
-#monopoly div.modal#mortgage .selected-property span.name,
-#monopoly div.modal#mortgage .properties .item span.name {
+#monopoly dialog.modal#mortgage .selected-property span.name,
+#monopoly dialog.modal#mortgage .properties .item span.name {
     /* position */
     position: absolute;
     bottom: 0;
@@ -105,21 +105,21 @@ body.modal-mortgage-visible #monopoly div.modal-overlay#for-mortgage {
     transition: left 0.125s ease-in-out, translate 0.125s ease-in-out;
 }
 
-#monopoly div.modal#mortgage .selected-property:focus-visible,
-#monopoly div.modal#mortgage .properties .item:focus-visible {
+#monopoly dialog.modal#mortgage .selected-property:focus-visible,
+#monopoly dialog.modal#mortgage .properties .item:focus-visible {
     outline: 2px solid var(--form-color-selector);
     outline-offset: 2px;
 }
 
-#monopoly div.modal#mortgage .properties .item:hover span.title,
-#monopoly div.modal#mortgage .properties .item:focus-visible span.title,
-#monopoly div.modal#mortgage .properties .item:hover span.name,
-#monopoly div.modal#mortgage .properties .item:focus-visible span.name {
+#monopoly dialog.modal#mortgage .properties .item:hover span.title,
+#monopoly dialog.modal#mortgage .properties .item:focus-visible span.title,
+#monopoly dialog.modal#mortgage .properties .item:hover span.name,
+#monopoly dialog.modal#mortgage .properties .item:focus-visible span.name {
     left: 10px;
     translate: 0 0;
 }
 
-#monopoly div.modal#mortgage .selected-property span.icon-hover {
+#monopoly dialog.modal#mortgage .selected-property span.icon-hover {
     /* position */
     position: absolute;
     inset: 10px;
@@ -132,7 +132,7 @@ body.modal-mortgage-visible #monopoly div.modal-overlay#for-mortgage {
     line-height: 1;
 }
 
-#monopoly div.modal#mortgage .selected-property span.hover {
+#monopoly dialog.modal#mortgage .selected-property span.hover {
     /* position */
     position: absolute;
     inset: 0;
@@ -156,8 +156,8 @@ body.modal-mortgage-visible #monopoly div.modal-overlay#for-mortgage {
     opacity: 0;
 }
 
-#monopoly div.modal#mortgage .selected-property:hover span.hover,
-#monopoly div.modal#mortgage .selected-property:focus-visible span.hover {
+#monopoly dialog.modal#mortgage .selected-property:hover span.hover,
+#monopoly dialog.modal#mortgage .selected-property:focus-visible span.hover {
     /* hiding */
     opacity: 1;
 }

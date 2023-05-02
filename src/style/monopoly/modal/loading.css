@@ -1,4 +1,4 @@
-#monopoly div.modal div.loading {
+#monopoly dialog.modal div.loading {
     /* sizing */
     width: 100%;
     padding-bottom: 20px;
@@ -14,7 +14,7 @@
     --delay: 0.25s;
 }
 
-#monopoly div.modal div.loading .dot-flashing {
+#monopoly dialog.modal div.loading .dot-flashing {
     position: relative;
     width: 10px;
     height: 10px;
@@ -25,15 +25,15 @@
     animation-delay: calc(var(--delay) * 1);
 }
 
-#monopoly div.modal div.loading .dot-flashing::before,
-#monopoly div.modal div.loading .dot-flashing::after {
+#monopoly dialog.modal div.loading .dot-flashing::before,
+#monopoly dialog.modal div.loading .dot-flashing::after {
     content: "";
     display: inline-block;
     position: absolute;
     top: 0;
 }
 
-#monopoly div.modal div.loading .dot-flashing::before {
+#monopoly dialog.modal div.loading .dot-flashing::before {
     left: -15px;
     width: 10px;
     height: 10px;
@@ -44,7 +44,7 @@
     animation-delay: calc(var(--delay) * 0);
 }
 
-#monopoly div.modal div.loading .dot-flashing::after {
+#monopoly dialog.modal div.loading .dot-flashing::after {
     left: 15px;
     width: 10px;
     height: 10px;

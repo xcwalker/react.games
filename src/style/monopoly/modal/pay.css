@@ -2,18 +2,18 @@ body.modal-pay-visible {
     overflow-y: hidden;
 }
 
-body.modal-pay-visible #monopoly div.modal#pay {
+body.modal-pay-visible #monopoly dialog.modal#pay {
     /* hiding */
     display: flex;
 }
 
-body.modal-pay-visible #monopoly div.modal-overlay#for-pay {
+body.modal-pay-visible #monopoly dialog.modal-overlay#for-pay {
     /* hiding */
     pointer-events: auto;
     opacity: 1;
 }
 
-#monopoly div.modal#pay form button[type="bank"] {
+#monopoly dialog.modal#pay form button[type="bank"] {
     /* sizing */
     width: 100%;
     padding: 5px;
@@ -32,14 +32,14 @@ body.modal-pay-visible #monopoly div.modal-overlay#for-pay {
     color: var(--foreground-color-100);
 }
 
-#monopoly div.modal#pay form button[type="bank"]:hover,
-#monopoly div.modal#pay form button[type="bank"]:focus-visible {
+#monopoly dialog.modal#pay form button[type="bank"]:hover,
+#monopoly dialog.modal#pay form button[type="bank"]:focus-visible {
     border: 2px solid var(--foreground-color-100);
     background-color: var(--foreground-color-100);
     color: var(--form-color-selector);
 }
 
-#monopoly div.modal#pay form button[type="bank"] svg.bank {
+#monopoly dialog.modal#pay form button[type="bank"] svg.bank {
     /* sizing */
     --size: 50px;
     height: var(--size);
@@ -50,14 +50,14 @@ body.modal-pay-visible #monopoly div.modal-overlay#for-pay {
     fill: currentColor;
 }
 
-#monopoly div.modal#pay form button[type="bank"] span {
+#monopoly dialog.modal#pay form button[type="bank"] span {
     /* text */
     font-size: 22px;
     font-weight: 700;
     line-height: 1;
 }
 
-#monopoly div.modal#pay .recipient svg.bank {
+#monopoly dialog.modal#pay .recipient svg.bank {
     /* sizing */
     --size: 50px;
     height: var(--size);
@@ -68,7 +68,7 @@ body.modal-pay-visible #monopoly div.modal-overlay#for-pay {
     fill: currentColor;
 }
 
-#monopoly div.modal#pay .recipient span.bank {
+#monopoly dialog.modal#pay .recipient span.bank {
     /* text */
     font-size: 22px;
     font-weight: 700;
