@@ -885,10 +885,6 @@ function Modal_Pay(props) {
     const [loading, setLoading] = useState(false)
     const [loadingData, setLoadingData] = useState(false)
 
-    // useEffect(() => { // Dev Code
-    //     document.body.classList.add("modal-pay-visible")
-    // }, [])
-
     useEffect(() => {
         if (recipient === "" || recipient === "bank" || !recipient) return
 
@@ -932,7 +928,7 @@ function Modal_Pay(props) {
         promise.then(res => {
             setRecipient("")
             setAmount(0)
-            document.body.classList.remove("modal-pay-visible")
+            document.querySelector("dialog#pay").close();
             return
         })
 
@@ -1787,7 +1783,7 @@ function Modal_Gamemaster_GoPass(props) {
 
         promise.then(res => {
             setRecipient("")
-            document.body.classList.remove("modal-goPass-visible")
+            document.querySelector("dialog#goPass").close();
             return
         })
 
